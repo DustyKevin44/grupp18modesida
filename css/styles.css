@@ -100,24 +100,32 @@ form > input {
   border-radius: 0.5rem;
 }
 
-/* Styling for the autocomplete dropdown */
+/* Styling for the autocomplete dropdown container */
 .search-results-box {
   position: absolute;
   background: white;
   border: 1px solid #ccc;
-  width: 300px;
-  z-index: 1000;
+  width: 304px; /* Matches input width + padding borders */
   max-height: 200px;
   overflow-y: auto;
+  z-index: 1000;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  margin-top: 2px;
+  display: none; /* Hidden by default */
 }
+
+/* Styling for each individual item inside the dropdown */
 .search-item {
-  padding: 8px 12px;
+  padding: 10px;
   cursor: pointer;
+  font-family: sans-serif;
+  font-size: 14px;
   border-bottom: 1px solid #eee;
-  font-size: 0.9em;
-  color: black;
+  color: #333;
+  text-align: left;
 }
+
 .search-item:hover {
   background-color: #f0f0f0;
 }

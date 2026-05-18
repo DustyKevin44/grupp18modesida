@@ -5,225 +5,186 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.11.0/dist/geosearch.css" />
 <script src="https://unpkg.com/leaflet-geosearch@3.11.0/dist/bundle.min.js"></script>
 
-<style>
-    /* Styling for the autocomplete dropdown container */
-    .search-results-box {
-        position: absolute;
-        background: white;
-        border: 1px solid #ccc;
-        width: 300px;
-        max-height: 200px;
-        overflow-y: auto;
-        z-index: 1000;
-        box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
-        border-radius: 4px;
-        margin-top: 2px;
-    }
+<div class="center">
+<div class="post-container">
+<form id="postForm" action="submit_post.php" method="POST">
+    <!-- Hidden fields for automated/structured data -->
+    <input type="hidden" name="location_data" id="locationData">
+    
+    <div>
+        <label for="description">Description:</label><br>
+        <textarea name="description" id="description" required></textarea>
+    </div>
 
-    /* Styling for each individual item inside the dropdown */
-    .search-item {
-        padding: 10px;
-        cursor: pointer;
-        font-family: sans-serif;
-        font-size: 14px;
-        border-bottom: 1px solid #eee;
-        color: #333;
-        text-align: left;
-    }
+    <div>
+        <label for="private">Private Post:</label>
+        <input type="checkbox" name="private" value="1" id="private">
+    </div>
 
-    .search-item:hover {
-        background-color: #f0f0f0;
-    }
-</style>
+    <div style="margin-top: 15px; position: relative;">
+        <label for="locationSearch">Location:</label><br>
+        <input type="text" id="locationSearch" placeholder="Search for a place (e.g., University of Michigan)..." style="width: 300px;" autocomplete="off">
+        <span id="locationCheckmark" style="color: green; display: none;"> ✓ Validated</span>
+        
+        <!-- Results dropdown menu container -->
+        <div id="searchResults" class="search-results-box"></div>
+        
+        <p style="font-size: 0.85em; color: #666;">Leave blank to use your current GPS location.</p>
+    </div>
 
-<body>
-    <main>
-        <div class="center" id="container">
-            <div class="post-container">
-                <form name="add" id="postForm" action="post.php" method="post">
-                    <h2>Create Post</h2>
-                    
-                    <!-- Hidden payload field for location data JSON string -->
-                    <input type="hidden" name="location_data" id="locationData">
-
-                    <label for="description">Description:</label>
-                    <textarea
-                        rows="5" cols="40"
-                        name="description"
-                        id="description"
-                        placeholder="Tell us about yourself!"></textarea>
-                    
-                    <div style="margin-top: 15px; position: relative;">
-                        <label for="locationSearch">Location:</label><br>
-                        <input type="text" id="locationSearch" autocomplete="off" placeholder="Search for a place (e.g., University of Michigan)..." style="width: 300px;">
-                        <span id="locationCheckmark" style="color: green; display: none;"> ✓ Validated</span>
-                        
-                        <!-- Dropdown container for search results -->
-                        <div id="searchResults" class="search-results-box" style="display: none;"></div>
-                        
-                        <p style="font-size: 0.85em; color: #666; margin-top: 5px;">Leave blank to use your current GPS location.</p>
-                    </div>
-
-                    <input type="submit" value="Send" style="margin-top: 15px;" />
-                </form>
-            </div>
-            <div class="post-container">
-                <p>test</p>
-            </div>
-        </div>
-    </main>
-<style>
-    /* Basic styling for the autocomplete dropdown */
-    .search-results-box {
-        position: absolute;
-        background: white;
-        border: 1px solid #ccc;
-        width: 300px;
-        max-height: 200px;
-        overflow-y: auto;
-        z-index: 1000;
-        box-shadow: 0 px 4px rgba(0,0,0,0.1);
-    }
-    .search-item {
-        padding: 8px 12px;
-        cursor: pointer;
-        font-size: 14px;
-        border-bottom: 1px solid #eee;
-    }
-    .search-item:hover {
-        background-color: #f0f0f0;
-    }
-</style>
+    <button type="submit" style="margin-top: 15px;">Create Post</button>
+</form>
+</div>
+</div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-    const searchInput = document.getElementById("locationSearch");
-    const resultsBox = document.getElementById("searchResults");
-    const checkmark = document.getElementById("locationCheckmark");
-    const hiddenPayload = document.getElementById("locationData");
-    const postForm = document.getElementById("postForm");
+// 1. Initialize the Search Provider with Nominatim-compliant headers
+const provider = new window.GeoSearch.OpenStreetMapProvider({
+    params: {
+        // REQUIRED BY POLICY: Identify your app. Replace with your actual email or unique app identifier.
+        'Accept-Language': 'sv', 
+        'email': 'dustykevin44@gmail.com' 
+    }
+});
 
-    let debounceTimeout;
-    let selectedLocationData = null;
+const searchInput = document.getElementById('locationSearch');
+const locationDataInput = document.getElementById('locationData');
+const checkmark = document.getElementById('locationCheckmark');
+const resultsBox = document.getElementById('searchResults');
+const form = document.getElementById('postForm');
 
-    // 1. Listen for typing in the location input
-    searchInput.addEventListener("input", () => {
-        const query = searchInput.value.trim();
-        
-        // Reset state if user clears input
-        if (query.length < 3) {
-            resultsBox.innerHTML = "";
-            resultsBox.style.display = "none";
-            checkmark.style.display = "none";
-            selectedLocationData = null;
-            return;
-        }
+let debounceTimer;
 
-        // Debounce API calls to save bandwidth and prevent rate-limiting
-        clearTimeout(debounceTimeout);
-        debounceTimeout = setTimeout(() => {
-            fetchLocations(query);
-        }, 400); 
-    });
+// Debounce helper: Delays executing the inner function until 1000ms after the last keystroke
+function debounce(func, delay) {
+    return function (...args) {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => func.apply(this, args), delay);
+    };
+}
 
-    // 2. Fetch data from OpenStreetMap Nominatim (CORS-safe)
-    async function fetchLocations(query) {
-        // Nominatim requires a descriptive User-Agent or Email to prevent blocking
-        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`;
-        
-        try {
-            const response = await fetch(url, {
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
-            const data = await response.json();
-            displayResults(data);
-        } catch (error) {
-            console.error("Error fetching location data:", error);
-        }
+// 2. Autocomplete API trigger wrapped in a 1-second debounce handler
+searchInput.addEventListener('input', debounce(async (e) => {
+    const query = e.target.value.trim();
+    
+    if (query.length < 3) {
+        resetLocationSelection();
+        return;
     }
 
-    // 3. Render results in the dropdown box
-    function displayResults(results) {
-        resultsBox.innerHTML = "";
-        
-        if (results.length === 0) {
-            resultsBox.style.display = "none";
-            return;
-        }
+    try {
+        // Query the free geocoding API safely complying with 1 req/sec limit
+        const results = await provider.search({ query: query });
+        renderResults(results);
+    } catch (error) {
+        console.error("Geocoding error:", error);
+    }
+}, 1000)); // 1000ms = 1 second of absolutely no input
 
-        results.forEach(item => {
-            const div = document.createElement("div");
-            div.className = "search-item";
-            div.textContent = item.display_name;
+// Render the results into the dropdown box
+function renderResults(results) {
+    resultsBox.innerHTML = '';
+    
+    if (results.length === 0) {
+        resultsBox.style.display = 'none';
+        return;
+    }
+
+    resultsBox.style.display = 'block';
+    
+    results.forEach(result => {
+        const item = document.createElement('div');
+        item.className = 'search-item';
+        item.textContent = result.label;
+        
+        // Handle when a user selects a location from the dropdown
+        item.addEventListener('click', () => {
+            searchInput.value = result.label;
             
-            // Handle clicking an item
-            div.addEventListener("click", () => {
-                searchInput.value = item.display_name;
-                resultsBox.style.display = "none";
-                checkmark.style.display = "inline"; // Visual validation
-                
-                // Store the relevant data to pass along later
-                selectedLocationData = {
-                    display_name: item.display_name,
-                    latitude: item.lat,
-                    longitude: item.lon
-                };
-            });
+            const structuredData = {
+                type: "search",
+                label: result.label,
+                lat: result.y,
+                lon: result.x
+            };
             
-            resultsBox.appendChild(div);
+            locationDataInput.value = JSON.stringify(structuredData);
+            checkmark.style.display = 'inline';
+            resultsBox.style.display = 'none';
         });
-
-        resultsBox.style.display = "block";
-    }
-
-    // Close dropdown if user clicks anywhere else on the screen
-    document.addEventListener("click", (e) => {
-        if (e.target !== searchInput && e.target !== resultsBox) {
-            resultsBox.style.display = "none";
-        }
+        
+        resultsBox.appendChild(item);
     });
+}
 
-    // 4. Handle Form Submission
-    postForm.addEventListener("submit", async (e) => {
-        // If the user typed something but didn't select from dropdown, clear data or force a check
-        if (searchInput.value.trim() !== "" && !selectedLocationData) {
-            alert("Please select a valid address from the dropdown list.");
-            e.preventDefault();
+// Close the dropdown list if clicking anywhere outside the search container
+document.addEventListener('click', function (e) {
+    if (e.target !== searchInput && e.target !== resultsBox) {
+        resultsBox.style.display = 'none';
+    }
+});
+
+function resetLocationSelection() {
+    checkmark.style.display = 'none';
+    locationDataInput.value = '';
+    resultsBox.innerHTML = '';
+    resultsBox.style.display = 'none';
+}
+
+// 3. Form Submission Handling
+form.addEventListener('submit', async function(e) {
+    e.preventDefault(); 
+
+    const query = searchInput.value.trim();
+
+    // Case A: User typed a location
+    if (query !== "") {
+        // If they chose from dropdown, locationDataInput will already be set
+        if (locationDataInput.value !== "") {
+            form.submit();
             return;
         }
 
-        // Fallback to Browser GPS if input is left blank
-        if (searchInput.value.trim() === "") {
-            e.preventDefault(); // Pause submission to get coordinates
+        // If they just typed something and hit Enter without choosing, do one fallback verification lookup
+        const results = await provider.search({ query: query });
+        if (results.length > 0) {
+            const topResult = results[0];
+            const structuredData = {
+                type: "search",
+                label: topResult.label,
+                lat: topResult.y,
+                lon: topResult.x
+            };
             
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const fallbackData = {
-                            display_name: "Current GPS Location",
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude
-                        };
-                        hiddenPayload.value = JSON.stringify(fallbackData);
-                        postForm.submit(); // Resume submission
-                    },
-                    (error) => {
-                        alert("Could not retrieve GPS location. Submitting without coordinates.");
-                        hiddenPayload.value = JSON.stringify({ error: "GPS denied or unavailable" });
-                        postForm.submit();
-                    }
-                );
-            } else {
-                hiddenPayload.value = JSON.stringify({ error: "Geolocation not supported" });
-                postForm.submit();
-            }
+            locationDataInput.value = JSON.stringify(structuredData);
+            form.submit();
         } else {
-            // Address was chosen from dropdown. Package the data string into the hidden field.
-            hiddenPayload.value = JSON.stringify(selectedLocationData);
+            alert("Please select or type a valid, recognizable location.");
         }
-    });
+    } 
+    // Case B: User left it blank. Fetch browser GPS location.
+    else {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const structuredData = {
+                        type: "gps",
+                        label: "Current Location",
+                        lat: position.coords.latitude,
+                        lon: position.coords.longitude
+                    };
+                    locationDataInput.value = JSON.stringify(structuredData);
+                    form.submit();
+                },
+                (error) => {
+                    alert("Location access denied or unavailable. Please type a location manually.");
+                },
+                { enableHighAccuracy: true, timeout: 5000 }
+            );
+        } else {
+            alert("Your browser does not support geolocation. Please type a location.");
+        }
+    }
 });
 </script>
 
