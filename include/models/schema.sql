@@ -1,0 +1,43 @@
+-- SQL Schema for fashionDatabase (SQLite Syntax)
+
+-- Enable foreign key support in SQLite (Must be run per connection)
+PRAGMA foreign_keys = ON;
+
+-- 1. Create User Table
+CREATE TABLE IF NOT EXISTS User (
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    Mail TEXT NOT NULL UNIQUE,
+    Password TEXT NOT NULL,
+    Locked INTEGER DEFAULT 0, -- 0 for false, 1 for true
+    Permission TEXT DEFAULT 'user'
+);
+
+-- 2. Create Post Table
+CREATE TABLE IF NOT EXISTS Post (
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    UserID INTEGER NOT NULL,
+    Private INTEGER DEFAULT 0,
+    Description TEXT,
+    Weatherdata TEXT,
+    Locationdata TEXT,
+    FOREIGN KEY (UserID) REFERENCES User(ID) ON DELETE CASCADE
+);
+
+-- 3. Create Image Table
+CREATE TABLE IF NOT EXISTS Image (
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    UserID INTEGER NOT NULL,
+    PostID INTEGER NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES User(ID) ON DELETE CASCADE,
+    FOREIGN KEY (PostID) REFERENCES Post(ID) ON DELETE CASCADE
+);
+
+-- 4. Create Comment Table
+CREATE TABLE IF NOT EXISTS Comment (
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
+    UserID INTEGER NOT NULL,
+    PostID INTEGER NOT NULL,
+    Description TEXT NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES User(ID) ON DELETE CASCADE,
+    FOREIGN KEY (PostID) REFERENCES Post(ID) ON DELETE CASCADE
+);
