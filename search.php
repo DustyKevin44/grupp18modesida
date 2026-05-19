@@ -1,4 +1,5 @@
-<?php require_once "include/views/_header.php"; ?>
+<?php require_once "include/views/_header.php"; 
+require_once "include/models/weatherInfo.php"?>
 
 <body>
 
@@ -32,11 +33,33 @@
       </datalist>
       
       <div id="date-preview">Today</div>
+
+      <label for="category-select">Select a category:</label>
+      <select id="category-select" name="category" required>
+        <option value="" disabled selected>-- Choose an option --</option>
+        <option value="Education">School</option>
+        <option value="Sustenance">Bar/Resturant</option>
+        <option value="Entertainment, Arts & Culture">Culture</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <div style="margin-top: 15px; position: relative;">
+        <label for="locationSearch">Location:</label><br>
+        <input type="text" id="locationSearch" placeholder="Search for a place (e.g., University of Michigan)..." style="width: 300px;" autocomplete="off">
+        <span id="locationCheckmark" style="color: green; display: none;"> ✓ Validated</span>
+        
+        <!-- Results dropdown menu container -->
+        <div id="searchResults" class="search-results-box"></div>
+        
+        <p style="font-size: 0.85em; color: #666;">Leave blank to use your current GPS location.</p>
+    </div>
       
       <button type="submit" class="submit-btn">Confirm</button>
     </form>
   </div>
 </div>
+
+<script src="include/models/autocomplete.js"></script>
 
 <script>
 const slider = document.getElementById('date-slider');
