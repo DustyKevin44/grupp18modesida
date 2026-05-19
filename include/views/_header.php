@@ -20,7 +20,7 @@
     <div class="nav-links">
       <a href="index.php">Home</a>
       <a href="post.php">Create a post</a>
-      <a href="services.php">Services</a>
+      <a href="search.php">Search</a>
       <a href="login.php">Login</a>
     </div>
   </nav>

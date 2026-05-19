@@ -80,77 +80,98 @@ textarea {
   flex-direction: column;
   gap: 2rem;
 
+  /* Centers the h2 and the form container horizontally */
   justify-content: center;
   align-items: center;
 
+  width: 50vw;
+  min-width: 300px;
+  max-width: 600px;
   padding: 2rem;
   border-radius: 1rem;
   background-color: black;
   color: white;
+  box-sizing: border-box;
+}
+
+.post-container h2 {
+  align-self: center; /* Centers the h2 box inside the flex container */
+  text-align: center; /* Centers the text inside the h2 box */
+  width: 100%; /* Ensures it has full width to center properly */
+  margin: 0; /* Optional: cleans up default browser margins */
 }
 
 form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+
+  /* Centers all internal form elements (labels, slider, button) horizontally */
+  align-items: center;
 }
 
-form > input {
-  padding: 1rem;
-  border-radius: 0.5rem;
-}
-
-/* Styling for the autocomplete dropdown container */
-.search-results-box {
-  position: absolute;
-  background: white;
-  border: 1px solid #ccc;
-  width: 304px; /* Matches input width + padding borders */
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 1000;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-  margin-top: 2px;
-  display: none; /* Hidden by default */
-}
-
-/* Styling for each individual item inside the dropdown */
-.search-item {
-  padding: 10px;
-  cursor: pointer;
-  font-family: sans-serif;
-  font-size: 14px;
-  border-bottom: 1px solid #eee;
-  color: #333;
-  text-align: left;
-}
-
-.search-item:hover {
-  background-color: #f0f0f0;
-}
-
-form label {
-  font-size: 14px;
-  color: #ccc;
+/* Centers the text inside labels and the date preview */
+form label,
+#date-preview,
+.post-container h2 {
+  text-align: center;
+  width: 100%;
 }
 
 #date-slider {
+  /* Using 100% now so it centers evenly across the available space */
   width: 100%;
+  margin: 0;
+  padding: 0;
+
   cursor: pointer;
-  accent-color: #fff; /* Makes the draggable thumb white */
+  accent-color: #fff;
+  box-sizing: border-box;
+
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
 }
 
-#date-preview {
-  text-align: center;
-  font-weight: bold;
-  font-size: 1.1rem;
-  margin: 0.5rem 0;
-  color: #4df; /* Light blue accent for clarity */
+/* Custom track and thumb styling to keep edge-to-edge alignment centered */
+#date-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  background: #444;
+  border-radius: 2px;
+}
+
+#date-slider::-moz-range-track {
+  width: 100%;
+  height: 4px;
+  background: #444;
+  border-radius: 2px;
+}
+
+#date-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -6px;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+#date-slider::-moz-range-thumb {
+  height: 16px;
+  width: 16px;
+  border: none;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
 }
 
 .submit-btn {
-  padding: 1rem;
+  padding: 1rem 2rem;
   border-radius: 0.5rem;
   border: none;
   background-color: white;
@@ -158,6 +179,9 @@ form label {
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s;
+
+  /* Keeps the button centered instead of stretching full width */
+  align-self: center;
 }
 
 .submit-btn:hover {
