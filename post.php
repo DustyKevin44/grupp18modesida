@@ -1,3 +1,84 @@
+<?php
+require_once("include/models/db.php");
+
+// Simulated active user ID. Replace this with your actual session authentication: $_SESSION['user_id']
+$currentUserId = 1; 
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['location_data'])) {
+    
+    // 1. Decode the incoming Javascript JSON data
+    $locationData = json_decode($_POST['location_data'], true);
+
+    if ($locationData) {
+        $label     = $locationData['label'] ?? 'Unknown Location';
+        $lat       = $locationData['lat'];
+        $lon       = $locationData['lon'];
+        $placeType = $locationData['place_type'] ?? 'unknown'; // e.g., "school", "mall"
+
+        // Handle private checkbox setting (0 or 1)
+        $isPrivate = isset($_POST['private']) ? 1 : 0;
+        $description = $_POST['description'] ?? '';
+
+        // Default weather fallbacks
+        $temperature = 0; // NOT NULL requirement in your schema
+        $weatherCondition = "Unknown";
+
+        // 2. Fetch live weather using Open-Meteo API
+        $weatherUrl = "https://api.open-meteo.com/v1/forecast?latitude={$lat}&longitude={$lon}&current_weather=true";
+        
+        // Make the API call safely
+        $weatherResponse = @file_get_contents($weatherUrl);
+        
+        if ($weatherResponse !== false) {
+            $weatherData = json_decode($weatherResponse, true);
+            
+            if (isset($weatherData['current_weather'])) {
+                // Rounding because your schema defines Temperature as INT
+                $temperature = round($weatherData['current_weather']['temperature']); 
+                $weatherCode = $weatherData['current_weather']['weathercode'];
+                
+                // Map the WMO weather code integer to a human-readable string
+                $weatherCondition = interpretWeatherCode($weatherCode);
+            }
+        }
+
+        // 3. DATABASE INSERTION (Matching your SQLite Post Table Schema)
+        try {
+            $stmt = $pdo->prepare("
+                INSERT INTO Post (UserID, Private, Description, Weather, Temperature, Adress, Type) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ");
+            
+            $stmt->execute([
+                $currentUserId,
+                $isPrivate,
+                $description,
+                $weatherCondition,
+                $temperature,
+                $label,       // Maps to 'Adress'
+                $placeType    // Maps to 'Type'
+            ]);
+
+            echo "<div style='color: green; padding: 10px; border: 1px solid green; background: #e6ffe6;'>Post successfully created!</div>";
+
+        } catch (PDOException $e) {
+            echo "<div style='color: red; padding: 10px; border: 1px solid red; background: #ffe6e6;'>Database Error: " . htmlspecialchars($e->getMessage()) . "</div>";
+        }
+    }
+}
+
+// Helper function to map standard WMO Weather Codes to text descriptions
+function interpretWeatherCode($code) {
+    if ($code == 0) return "Clear sky";
+    if (in_array($code, [1, 2, 3])) return "Mainly clear / Partly cloudy";
+    if (in_array($code, [45, 48])) return "Foggy";
+    if (in_array($code, [51, 53, 55, 61, 63, 65])) return "Rainy";
+    if (in_array($code, [71, 73, 75, 77, 85, 86])) return "Snowy";
+    if (in_array($code, [95, 96, 99])) return "Thunderstorm";
+    return "Overcast";
+}
+?>
+
 <?php require_once "include/views/_header.php"; ?>
 
 <!-- Load Leaflet and Geocoding CSS/JS (Free OpenStreetMap search) -->
@@ -7,7 +88,7 @@
 
 <div class="center">
 <div class="post-container">
-<form id="postForm" action="submit_post.php" method="POST">
+<form id="postForm" action="post.php" method="POST">
     <!-- Hidden fields for automated/structured data -->
     <input type="hidden" name="location_data" id="locationData">
     
@@ -41,7 +122,6 @@
 // 1. Initialize the Search Provider with Nominatim-compliant headers
 const provider = new window.GeoSearch.OpenStreetMapProvider({
     params: {
-        // REQUIRED BY POLICY: Identify your app. Replace with your actual email or unique app identifier.
         'Accept-Language': 'sv', 
         'email': 'dustykevin44@gmail.com' 
     }
@@ -55,7 +135,6 @@ const form = document.getElementById('postForm');
 
 let debounceTimer;
 
-// Debounce helper: Delays executing the inner function until 1000ms after the last keystroke
 function debounce(func, delay) {
     return function (...args) {
         clearTimeout(debounceTimer);
@@ -73,13 +152,12 @@ searchInput.addEventListener('input', debounce(async (e) => {
     }
 
     try {
-        // Query the free geocoding API safely complying with 1 req/sec limit
         const results = await provider.search({ query: query });
         renderResults(results);
     } catch (error) {
         console.error("Geocoding error:", error);
     }
-}, 1000)); // 1000ms = 1 second of absolutely no input
+}, 1000));
 
 // Render the results into the dropdown box
 function renderResults(results) {
@@ -97,15 +175,17 @@ function renderResults(results) {
         item.className = 'search-item';
         item.textContent = result.label;
         
-        // Handle when a user selects a location from the dropdown
         item.addEventListener('click', () => {
             searchInput.value = result.label;
+            
+            const placeType = result.raw.type || result.raw.addresstype || "unknown";
             
             const structuredData = {
                 type: "search",
                 label: result.label,
                 lat: result.y,
-                lon: result.x
+                lon: result.x,
+                place_type: placeType 
             };
             
             locationDataInput.value = JSON.stringify(structuredData);
@@ -117,7 +197,6 @@ function renderResults(results) {
     });
 }
 
-// Close the dropdown list if clicking anywhere outside the search container
 document.addEventListener('click', function (e) {
     if (e.target !== searchInput && e.target !== resultsBox) {
         resultsBox.style.display = 'none';
@@ -139,21 +218,22 @@ form.addEventListener('submit', async function(e) {
 
     // Case A: User typed a location
     if (query !== "") {
-        // If they chose from dropdown, locationDataInput will already be set
         if (locationDataInput.value !== "") {
             form.submit();
             return;
         }
 
-        // If they just typed something and hit Enter without choosing, do one fallback verification lookup
         const results = await provider.search({ query: query });
         if (results.length > 0) {
             const topResult = results[0];
+            const placeType = topResult.raw?.type || topResult.raw?.addresstype || "unknown";
+            
             const structuredData = {
                 type: "search",
                 label: topResult.label,
                 lat: topResult.y,
-                lon: topResult.x
+                lon: topResult.x,
+                place_type: placeType
             };
             
             locationDataInput.value = JSON.stringify(structuredData);
@@ -171,7 +251,8 @@ form.addEventListener('submit', async function(e) {
                         type: "gps",
                         label: "Current Location",
                         lat: position.coords.latitude,
-                        lon: position.coords.longitude
+                        lon: position.coords.longitude,
+                        place_type: "gps"
                     };
                     locationDataInput.value = JSON.stringify(structuredData);
                     form.submit();

@@ -18,8 +18,10 @@ CREATE TABLE IF NOT EXISTS Post (
     UserID INTEGER NOT NULL,
     Private INTEGER DEFAULT 0,
     Description TEXT,
-    Weatherdata TEXT,
-    Locationdata TEXT,
+    Weather TEXT NOT NULL,
+    Temperature INT NOT NULL,
+    Adress TEXT NOT NULL,
+    Type TEXT NOT NULL,
     FOREIGN KEY (UserID) REFERENCES User(ID) ON DELETE CASCADE
 );
 
