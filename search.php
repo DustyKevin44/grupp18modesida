@@ -43,6 +43,14 @@ require_once "include/models/weatherInfo.php"?>
         <option value="Other">Other</option>
       </select>
 
+      <div class="location-group">
+        <label class="checkbox-container">
+          <input type="checkbox" id="use-location" name="use-location">
+          Use my current location
+        </label>
+        <div id="location-status"></div>
+      </div>
+
       <div style="margin-top: 15px; position: relative;">
         <label for="locationSearch">Location:</label><br>
         <input type="text" id="locationSearch" placeholder="Search for a place (e.g., University of Michigan)..." style="width: 300px;" autocomplete="off">
@@ -59,6 +67,7 @@ require_once "include/models/weatherInfo.php"?>
   </div>
 </div>
 
+<script src="include/models/currentLocation.js"></script>
 <script src="include/models/autocomplete.js"></script>
 
 <script>
