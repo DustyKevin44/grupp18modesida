@@ -22,6 +22,7 @@
       <a href="post.php">Create a post</a>
       <a href="search.php">Search</a>
       <a href="login.php">Login</a>
+      <a href="logout.php">Logout</a>
     </div>
   </nav>
 </header>
