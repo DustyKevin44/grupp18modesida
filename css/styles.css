@@ -170,6 +170,32 @@ form label,
   cursor: pointer;
 }
 
+#category-select {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #444;
+  background-color: white; /* Slightly lighter dark shade for contrast */
+  color: black;
+  font-size: 1rem;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+/* Add a subtle border highlight when the user clicks the dropdown */
+#category-select:focus {
+  border-color: #fff;
+}
+
+/* Ensure the dropdown choices are readable across different browsers */
+#category-select option {
+  background-color: white;
+  color: black;
+}
+
 .submit-btn {
   padding: 1rem 2rem;
   border-radius: 0.5rem;
