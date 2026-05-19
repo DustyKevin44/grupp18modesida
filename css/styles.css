@@ -129,3 +129,37 @@ form > input {
 .search-item:hover {
   background-color: #f0f0f0;
 }
+
+form label {
+  font-size: 14px;
+  color: #ccc;
+}
+
+#date-slider {
+  width: 100%;
+  cursor: pointer;
+  accent-color: #fff; /* Makes the draggable thumb white */
+}
+
+#date-preview {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+  color: #4df; /* Light blue accent for clarity */
+}
+
+.submit-btn {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  background-color: white;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submit-btn:hover {
+  background-color: #ddd;
+}
