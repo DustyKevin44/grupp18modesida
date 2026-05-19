@@ -196,6 +196,29 @@ form label,
   color: black;
 }
 
+#search-container {
+  /* Set up a vertical stack that snaps elements to the left */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+
+  width: 100%;
+  margin-top: 15px;
+  position: relative;
+}
+
+/* Explicitly left-align the text elements inside the container */
+#search-container label,
+#search-container p {
+  text-align: left;
+  width: 100%;
+}
+
+.hidden {
+  display: none !important;
+}
+
 /* Layout wrapper for the location element */
 .location-group {
   width: 100%;
