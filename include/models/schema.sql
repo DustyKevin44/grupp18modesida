@@ -7,6 +7,7 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS User (
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Mail TEXT NOT NULL UNIQUE,
+    Username TEXT NOT NULL UNIQUE,
     Password TEXT NOT NULL,
     Locked INTEGER DEFAULT 0, -- 0 for false, 1 for true
     Permission TEXT DEFAULT 'user'
