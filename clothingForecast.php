@@ -65,10 +65,6 @@ require_once "include/models/weatherInfo.php"?>
   </div>
 </div>
 
-<div class="center">
-  <div ></div>
-</div>
-
 <script src="include/models/currentLocation.js"></script>
 <script src="include/models/autocomplete.js"></script>
 <script src="include/models/dateSelector.js"></script>

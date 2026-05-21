@@ -133,6 +133,7 @@ require_once "include/models/weatherInfo.php"
 
 <div class="center">
     <div class="post-container">
+        <h2>Create Post</h2>
         <form id="postForm" action="post.php" method="POST" enctype="multipart/form-data">
             <!-- Hidden fields for automated/structured data -->
             <div>
@@ -167,7 +168,7 @@ require_once "include/models/weatherInfo.php"
                 <p style="font-size: 0.85em; color: #666;">Leave blank to use your current GPS location.</p>
             </div>
 
-            <button type="submit" style="margin-top: 15px;">Create Post</button>
+            <button type="submit" style="margin-top: 15px;" class="submit-btn">Create Post</button>
         </form>
     </div>
 </div>

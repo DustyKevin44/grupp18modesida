@@ -86,10 +86,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <body>
 
 <div class="center">
+
   <div class="post-container">
-
     <h2>Search Posts</h2>
-
+  <form id="search-form" action="search.php" method="post">
     <!-- FILTERS -->
     <label>Keyword:</label>
     <input type="text" id="query">
@@ -132,13 +132,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <input type="hidden" id="locationData">
 
-    <button id="searchBtn">Search</button>
+    <button type="submit" id="searchBtn" class="submit-btn">Search</button>
+  <form>  
 
     <hr>
 
     <!-- RESULTS -->
     <div id="results"></div>
-
   </div>
 </div>
 

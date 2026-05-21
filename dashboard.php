@@ -22,62 +22,63 @@ if ($currentUserId) {
 
 require_once "include/views/_header.php"; 
 ?>
-
-    <main class="dashboard">
-        <h1>Dashboard</h1>
-        <h2>Hello, <?= htmlspecialchars($_SESSION['username']); ?>!</h2>
-        <p>You have successfully logged in</p>
-        
-        <p><a href="logout.php" style="color: red;">Log Out</a></p>
-    </main>
-
     <div class="center">
-        <h2>My posts</h2>
-    </div>
+        <div class="dashboard">
+            <h1>Dashboard</h1>
+            <h2>Hello, <?= htmlspecialchars($_SESSION['username']); ?>!</h2>
+            <p>You have successfully logged in</p>
+            
+            <p><a href="logout.php" style="color: red;">Log Out</a></p>
+        </div>
 
-    <div class="posts-section">
-    <?php if (!empty($posts)): ?>
-        <?php foreach ($posts as $post): ?>
+        <div class="post-container">
+            <h2>My posts</h2>
 
-            <div class="post-card">
+            <div class="posts-section">
+            <?php if (!empty($posts)): ?>
+                <?php foreach ($posts as $post): ?>
 
-                <div class="post-header">
-                    <strong><?= htmlspecialchars($post['Type']) ?></strong>
-                    <span><?= htmlspecialchars($post['Adress']) ?></span>
-                </div>
+                    <div class="post-card">
 
-                <p class="post-desc">
-                    <?= nl2br(htmlspecialchars($post['Description'])) ?>
-                </p>
+                        <div class="post-header">
+                            <strong><?= htmlspecialchars($post['Type']) ?></strong>
+                            <span><?= htmlspecialchars($post['Adress']) ?></span>
+                        </div>
 
-                <div class="post-meta">
-                    <span>🌤 <?= htmlspecialchars($post['Weather']) ?></span>
-                    <span>🌡 <?= htmlspecialchars($post['Temperature']) ?>°C</span>
+                        <p class="post-desc">
+                            <?= nl2br(htmlspecialchars($post['Description'])) ?>
+                        </p>
 
-                    <?php if ($post['Private']): ?>
-                        <span class="private-tag">Private</span>
-                    <?php endif; ?>
-                </div>
+                        <div class="post-meta">
+                            <span>🌤 <?= htmlspecialchars($post['Weather']) ?></span>
+                            <span>🌡 <?= htmlspecialchars($post['Temperature']) ?>°C</span>
 
-                <!-- IMAGES -->
-                <div class="post-images">
-                    <?php
-                    $imgStmt = $pdo->prepare("SELECT FilePath FROM Image WHERE PostID = ?");
-                    $imgStmt->execute([$post['ID']]);
-                    $images = $imgStmt->fetchAll(PDO::FETCH_ASSOC);
-                    ?>
+                            <?php if ($post['Private']): ?>
+                                <span class="private-tag">Private</span>
+                            <?php endif; ?>
+                        </div>
 
-                    <?php foreach ($images as $img): ?>
-                        <img src="<?= htmlspecialchars($img['FilePath']) ?>" alt="Post image">
-                    <?php endforeach; ?>
-                </div>
+                        <!-- IMAGES -->
+                        <div class="post-images">
+                            <?php
+                            $imgStmt = $pdo->prepare("SELECT FilePath FROM Image WHERE PostID = ?");
+                            $imgStmt->execute([$post['ID']]);
+                            $images = $imgStmt->fetchAll(PDO::FETCH_ASSOC);
+                            ?>
 
+                            <?php foreach ($images as $img): ?>
+                                <img src="<?= htmlspecialchars($img['FilePath']) ?>" alt="Post image">
+                            <?php endforeach; ?>
+                        </div>
+
+                    </div>
+
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>No posts yet.</p>
+            <?php endif; ?>
             </div>
-
-        <?php endforeach; ?>
-    <?php else: ?>
-        <p>No posts yet.</p>
-    <?php endif; ?>
-</div>
+    </div>
+    </div>
 
 <?php require_once "include/views/_footer.php"; ?>
