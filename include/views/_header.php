@@ -20,7 +20,6 @@ require_once("include/models/db.php");
 </head>
 
 <body>
-
 <header>
     <nav class="navbar">
         <div class="navbar-title">My Website</div>
@@ -30,10 +29,12 @@ require_once("include/models/db.php");
             <a href="post.php">Create a post</a>
             <a href="search.php">Search</a>
 
-            <?php if (isset($_SESSION['user'])): ?>
-                
+            <?php if (isset($_SESSION['user_id'])): ?>
+
+                <a href="dashboard.php">Dashboard</a>
+
                 <span class="username">
-                    Welcome, <?= htmlspecialchars($_SESSION['user']) ?>
+                   <a>Welcome, <?= htmlspecialchars($_SESSION['username']) ?></a> 
                 </span>
 
                 <a href="logout.php">Logout</a>
