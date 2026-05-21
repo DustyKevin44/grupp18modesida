@@ -44,7 +44,6 @@ searchInput.addEventListener(
 
 // Render the results into the dropdown box
 function renderResults(results) {
-  console.log("renderResults called", results);
 
   resultsBox.innerHTML = "";
 
@@ -58,7 +57,6 @@ function renderResults(results) {
   results.forEach((result) => {
     const item = document.createElement("div");
     item.className = "search-item";
-    console.log(result.raw);
     item.textContent = formatAddress(result.raw);
 
     item.addEventListener("click", () => {
