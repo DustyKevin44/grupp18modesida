@@ -254,6 +254,11 @@ form label,
   min-height: 1.2rem; /* Keeps layout stable when text shifts */
 }
 
+.disclaimer-text {
+  font-size: 0.85em;
+  color: #666;
+}
+
 .submit-btn {
   padding: 1rem 2rem;
   border-radius: 0.5rem;
