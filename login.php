@@ -4,15 +4,7 @@ session_start();
 // 1. Process the login form only if it's a POST request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
-    // Connect to your SQLite Database
-    try {
-        $db = new PDO('sqlite:database.db');
-        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch (PDOException $e) {
-        $_SESSION['login_error'] = "Database connection failed.";
-        header("Location: login.php");
-        exit();
-    }
+    require_once("include/models/db.php");
 
     // Sanitize and grab inputs
     $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
@@ -26,8 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         // Fetch the user details by email
-        $stmt = $db->prepare("SELECT ID, Password, Locked, Permission FROM User WHERE Mail = :email LIMIT 1");
-        $stmt->execute([':email' => $email]);
+$stmt = $pdo->prepare("SELECT ID, Username, Password, Locked, Permission FROM User WHERE Mail = :email LIMIT 1");        $stmt->execute([':email' => $email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user) {
@@ -45,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // Store user data in session variables
                 $_SESSION['user_id'] = $user['ID'];
-                $_SESSION['user_email'] = $email;
+                $_SESSION['username'] = $user['Username'];
                 $_SESSION['user_permission'] = $user['Permission'];
 
                 // Redirect to a secure dashboard area
@@ -70,10 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 require_once "include/views/_header.php"; 
 ?>
 
-<body>
-    <header>
-        <h1>Welcome to My Website</h1>
-    </header>
 
     <main style="max-width: 400px; margin: 2rem auto; padding: 1rem; border: 1px solid #ccc; border-radius: 5px;">
         <h2>Login</h2>
