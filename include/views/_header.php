@@ -25,25 +25,26 @@ require_once("include/models/db.php");
         <div class="navbar-title">My Website</div>
 
         <div class="nav-links">
-            <a href="index.php">Home</a>
-            <a href="post.php">Create a post</a>
-            <a href="search.php">Search</a>
+            <div class="main-nav">
+                <a href="index.php">Home</a>
+                <a href="post.php">Create a post</a>
+                <a href="search.php">Search</a>
+                <a href="clothingForecast.php">Forecast</a>
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <a href="dashboard.php">Dashboard</a>
+                <?php endif; ?>
+            </div>
 
-            <?php if (isset($_SESSION['user_id'])): ?>
-
-                <a href="dashboard.php">Dashboard</a>
-
-                <span class="username">
-                   <a>Welcome, <?= htmlspecialchars($_SESSION['username']) ?></a> 
-                </span>
-
-                <a href="logout.php">Logout</a>
-
-            <?php else: ?>
-
-                <a href="login.php">Login</a>
-
-            <?php endif; ?>
+            <div class="auth-nav">
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <span class="username">
+                        Welcome, <?= htmlspecialchars($_SESSION['username']) ?>
+                    </span>
+                    <a href="logout.php">Logout</a>
+                <?php else: ?>
+                    <a href="login.php">Login</a>
+                <?php endif; ?>
+            </div>
         </div>
     </nav>
 </header>
