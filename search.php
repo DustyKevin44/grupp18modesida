@@ -58,17 +58,19 @@ require_once "include/models/weatherInfo.php"?>
         
         <div id="searchResults" class="search-results-box"></div>
         
-        <p style="font-size: 0.85em; color: #666;">Leave blank to use your current GPS location.</p>
+        <p class="disclaimer-text">Leave blank to use your current GPS location.</p>
       </div>
-      
       <button type="submit" class="submit-btn">Confirm</button>
     </form>
   </div>
 </div>
 
+<div class="center">
+  <div ></div>
+</div>
+
 <script src="include/models/currentLocation.js"></script>
 <script src="include/models/autocomplete.js"></script>
-
 <script src="include/models/dateSelector.js"></script>
 
 <?php require_once "include/views/_footer.php"; ?>
