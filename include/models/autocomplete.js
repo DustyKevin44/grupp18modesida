@@ -3,7 +3,7 @@
 const provider = new window.GeoSearch.OpenStreetMapProvider({
   params: {
     "Accept-Language": "sv",
-    email: "dustykevin44@gmail.com",
+    email: "your-email@example.com",
   },
 });
 
@@ -44,6 +44,8 @@ searchInput.addEventListener(
 
 // Render the results into the dropdown box
 function renderResults(results) {
+  console.log("renderResults called", results);
+
   resultsBox.innerHTML = "";
 
   if (results.length === 0) {
@@ -56,16 +58,17 @@ function renderResults(results) {
   results.forEach((result) => {
     const item = document.createElement("div");
     item.className = "search-item";
-    item.textContent = result.label;
+    console.log(result.raw);
+    item.textContent = formatAddress(result.raw);
 
     item.addEventListener("click", () => {
-      searchInput.value = result.label;
+      searchInput.value = formatAddress(result.raw);
 
       const placeType = result.raw.type || result.raw.addresstype || "unknown";
 
       const structuredData = {
         type: "search",
-        label: result.label,
+        label: formatAddress(result.raw), // ← fixed: was formatAddress(raw)
         lat: result.y,
         lon: result.x,
         place_type: placeType,
@@ -92,7 +95,36 @@ function resetLocationSelection() {
   resultsBox.innerHTML = "";
   resultsBox.style.display = "none";
 }
+function formatAddress(raw) {
+  const a = raw.address;
 
+  // Extract city and street from display_name parts
+  const parts = raw.display_name ? raw.display_name.split(", ") : [];
+  // display_name: "ICA Folkes Livs, 8, Rackarbergsgatan, ..., Uppsala, ..."
+  // Street is usually at index 2, city near the end before country
+  const street = parts[2] || null;
+  const houseNumber = parts[1] || null;
+  const city = parts.find(p => ["Uppsala", "Stockholm", "Göteborg", "Malmö"].includes(p)) 
+               || parts[parts.length - 4] 
+               || null;
+  const country = parts[parts.length - 1] || null;
+
+  if (!a) {
+    const name = raw.name || null;
+    const streetWithNumber = [street, houseNumber].filter(Boolean).join(" ");
+    return [name, streetWithNumber, city, country].filter(Boolean).join(", ");
+  }
+
+  const name = a.amenity || a.club || a.building || a.tourism || a.leisure || raw.name;
+  const aStreet = a.road;
+  const aHouseNumber = a.house_number;
+  const aCity = a.city || a.town || a.village;
+  const aCountry = a.country;
+
+  const streetWithNumber = [aStreet, aHouseNumber].filter(Boolean).join(" ");
+  if (name) return [name, streetWithNumber, aCity, aCountry].filter(Boolean).join(", ");
+  return [streetWithNumber, aCity, aCountry].filter(Boolean).join(", ");
+}
 // 3. Form Submission Handling
 form.addEventListener("submit", async function (e) {
   e.preventDefault();
@@ -114,7 +146,7 @@ form.addEventListener("submit", async function (e) {
 
       const structuredData = {
         type: "search",
-        label: topResult.label,
+        label: formatAddress(topResult.raw),
         lat: topResult.y,
         lon: topResult.x,
         place_type: placeType,
