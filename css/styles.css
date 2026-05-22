@@ -2,6 +2,7 @@ body {
   margin: 0;
   padding-bottom: 80px; /* Increased slightly to prevent your expanding content from hugging the fixed footer */
   font-family: Arial, sans-serif;
+  background-color: #fcf8f5; /* Warm, off-white sunset cream backdrop */
 }
 
 .center {
@@ -18,16 +19,23 @@ body {
   min-height: 80vh; /* Changed to min-height so it can grow vertically infinitely */
   height: auto; /* Lets content dictate height */
 
-  color: black;
+  color: #2d1912; /* Dark warm brown text instead of harsh black */
 }
 
 /* Navbar container */
 .navbar {
-  background-color: black;
+  /* Apply the linear gradient */
+  background: linear-gradient(135deg, #ff512f, #dd2476);
+
+  /* Layout and spacing */
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  padding: 0 1.5rem;
-  height: 10vh;
+  padding: 1rem 2rem;
+
+  /* Ensure text is readable against the bright background */
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(221, 36, 118, 0.2); /* Tinted drop shadow */
 }
 
 /* Website title */
@@ -73,7 +81,12 @@ body {
 }
 
 .nav-links a:hover {
-  background-color: #333;
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.2
+  ); /* Transparent white overlay instead of harsh dark gray */
 }
 
 /* Distinct styling for username display if needed */
@@ -91,12 +104,14 @@ footer {
   width: 100%;
   height: 60px;
 
-  background-color: black;
+  /* Matches the navbar gradient for a unified bottom frame */
+  background: linear-gradient(135deg, #ff512f, #dd2476);
   color: white;
 
   display: flex;
   justify-content: center;
   align-items: center;
+  box-shadow: 0 -4px 15px rgba(221, 36, 118, 0.15);
 }
 
 footer p {
@@ -119,11 +134,14 @@ textarea {
   width: 50vw;
   min-width: 50vw;
   max-width: 90vw;
-  padding: 1rem;
+  padding: 2rem;
   border-radius: 1rem;
-  background-color: black;
+
+  /* Converted card background to the rich sunset gradient */
+  background: linear-gradient(135deg, #ff512f, #dd2476);
   color: white;
   box-sizing: border-box;
+  box-shadow: 0 10px 25px rgba(221, 36, 118, 0.25);
 
   /* FIX 2: Explicitly added height tracking rule */
   height: auto; /* Ensures the container expands dynamically around the form */
@@ -137,6 +155,7 @@ textarea {
   /* FIX 3: Removed min-height: 80vh; */
   height: auto; /* Prevents the header from eating up almost all container space */
   margin: 0 0 1rem 0; /* Gives a healthy space below the title instead */
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 form {
@@ -177,14 +196,14 @@ form label,
 #date-slider::-webkit-slider-runnable-track {
   width: 100%;
   height: 4px;
-  background: #444;
+  background: rgba(255, 255, 255, 0.3); /* Softer slider track over gradient */
   border-radius: 2px;
 }
 
 #date-slider::-moz-range-track {
   width: 100%;
   height: 4px;
-  background: #444;
+  background: rgba(255, 255, 255, 0.3);
   border-radius: 2px;
 }
 
@@ -197,6 +216,7 @@ form label,
   border-radius: 50%;
   background: #ffffff;
   cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 #date-slider::-moz-range-thumb {
@@ -206,6 +226,7 @@ form label,
   border-radius: 50%;
   background: #ffffff;
   cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Target all text-based inputs, textareas, and select menus inside the form */
@@ -219,30 +240,38 @@ form input[type="file"],
 form textarea,
 form select {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.75rem;
   border-radius: 0.5rem;
-  border: 1px solid #444;
-  background-color: white;
-  color: black;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.95
+  ); /* Bright clean backdrop for input text */
+  color: #2d1912;
   font-size: 1rem;
   font-family: Arial, sans-serif;
   cursor: pointer;
   box-sizing: border-box;
   outline: none;
-  transition: border-color 0.2s;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
 }
 
 /* Add a subtle border highlight on focus for all elements */
 form input:focus,
 form textarea:focus,
 form select:focus {
-  border-color: #000; /* Changed to #000 (black) because your background is white. #fff would be invisible! */
+  border-color: #fff;
+  background-color: #ffffff;
 }
 
 /* Ensure dropdown choices match */
 form select option {
   background-color: white;
-  color: black;
+  color: #2d1912;
 }
 
 /* Quick adjustment for textareas to allow vertical resizing only */
@@ -259,7 +288,7 @@ form textarea {
 /* Ensure the dropdown choices are readable across different browsers */
 #category-select option {
   background-color: white;
-  color: black;
+  color: #2d1912;
 }
 
 #search-container {
@@ -287,31 +316,34 @@ form textarea {
   top: 100%; /* Positions it directly beneath the input field */
   left: 0;
   width: 300px; /* Matches your input field width */
-  background-color: black; /* Sets box background to black */
-  border: 1px solid #444; /* Dark border to match your form fields */
+  background-color: #ffffff; /* Swapped from black to match new form style */
+  border: 1px solid rgba(221, 36, 118, 0.3);
   border-top: none;
+  border-radius: 0 0 0.5rem 0.5rem;
   z-index: 1000; /* Ensures it floats above footer or other text elements */
   max-height: 200px;
   overflow-y: auto; /* Allows scrolling if there are many results */
   box-sizing: border-box;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Individual autocompleted search results */
 .search-item {
   padding: 10px 15px;
-  background-color: black; /* Black background */
-  color: white; /* White text color */
+  background-color: #ffffff;
+  color: #2d1912;
   cursor: pointer;
   font-family: Arial, sans-serif;
   font-size: 0.9rem;
   text-align: left; /* Keeps the suggestions left-aligned */
-  border-bottom: 1px solid #222; /* Subtle divider between results */
+  border-bottom: 1px solid #f5eae6; /* Soft warm divider between results */
   transition: background-color 0.2s;
 }
 
 /* Optional: Changes the item's appearance when hovered or highlighted */
 .search-item:hover {
-  background-color: #333; /* Slightly lighter gray on hover so users know it's clickable */
+  background-color: #fff1ed; /* Soft warm glow on hover */
+  color: #ff512f;
 }
 
 .hidden {
@@ -343,19 +375,19 @@ form textarea {
   width: 1.25rem;
   height: 1.25rem;
   cursor: pointer;
-  accent-color: white; /* Matches the white slider thumb theme */
+  accent-color: #ff512f; /* Accented sunset checkmark box */
 }
 
 /* Status message style below the checkbox */
 #location-status {
   font-size: 0.85rem;
-  color: #aaa;
+  color: #ffe0da; /* Highly legible soft sunset pink/orange text */
   min-height: 1.2rem; /* Keeps layout stable when text shifts */
 }
 
 .disclaimer-text {
   font-size: 0.85em;
-  color: #666;
+  color: rgba(255, 255, 255, 0.7); /* Readable overlay color */
 }
 
 .submit-btn {
@@ -363,17 +395,21 @@ form textarea {
   border-radius: 0.5rem;
   border: none;
   background-color: white;
-  color: black;
+  color: #dd2476; /* Vibrant magenta/orange tone text */
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.2s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition:
+    transform 0.2s,
+    background-color 0.2s;
 
   /* Keeps the button centered instead of stretching full width */
   align-self: center;
 }
 
 .submit-btn:hover {
-  background-color: #ddd;
+  background-color: #fff1ed;
+  transform: translateY(-1px);
 }
 
 .posts-section {
@@ -386,11 +422,11 @@ form textarea {
 
 .post-card {
   background: #fff;
-  border: 1px solid #ddd;
+  border: 1px solid #f5eae6; /* Soft warm border */
   border-radius: 12px;
   padding: 15px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(221, 36, 118, 0.05); /* Soft themed shadow */
 }
 
 .post-header {
@@ -398,26 +434,29 @@ form textarea {
   justify-content: space-between;
   font-weight: bold;
   margin-bottom: 10px;
+  color: #ff512f; /* Highlights names/titles with sunset orange */
 }
 
 .post-desc {
   margin-bottom: 10px;
+  color: #4a3630;
 }
 
 .post-meta {
   display: flex;
   gap: 10px;
   font-size: 14px;
-  color: #555;
+  color: #8c7670;
   margin-bottom: 10px;
 }
 
 .private-tag {
-  background: #ffdddd;
-  color: #a00;
+  background: #ffeae6; /* Pale warm pink tint */
+  color: #dd2476; /* Vibrant magenta warning tag */
   padding: 2px 6px;
   border-radius: 6px;
   font-size: 12px;
+  font-weight: bold;
 }
 
 .post-images img {
@@ -426,6 +465,7 @@ form textarea {
   object-fit: cover;
   border-radius: 8px;
   margin-right: 5px;
+  border: 1px solid #f5eae6;
 }
 
 .dashboard {
@@ -440,11 +480,15 @@ form textarea {
 
   padding: 3rem 2rem;
   border-radius: 1rem;
-  background-color: black;
+  background: linear-gradient(
+    135deg,
+    #ff512f,
+    #dd2476
+  ); /* Full dashboard theme block */
   color: white;
   box-sizing: border-box;
   text-align: center;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 25px rgba(221, 36, 118, 0.25);
 }
 
 /* Typography styling */
@@ -453,18 +497,19 @@ form textarea {
   margin: 0 0 0.5rem 0;
   text-transform: uppercase;
   letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 .dashboard h2 {
   font-size: 1.4rem;
   font-weight: 400;
-  color: #ccc; /* Subtle light gray for the greeting */
+  color: #ffe0da; /* Soft sunset white glow */
   margin: 0 0 1.5rem 0;
 }
 
 .dashboard p {
   font-size: 1rem;
-  color: #aaa;
+  color: rgba(255, 255, 255, 0.8);
   margin: 0 0 2rem 0;
 }
 
@@ -472,17 +517,17 @@ form textarea {
 .dashboard a[href="logout.php"] {
   display: inline-block;
   padding: 0.75rem 2rem;
-  border: 2px solid #ff4d4d;
+  border: 2px solid #ffffff; /* Clean white border over the gradient background */
   border-radius: 0.5rem;
   background-color: transparent;
-  color: #ff4d4d !important; /* Forces the red text */
+  color: #ffffff !important;
   text-decoration: none;
   font-weight: bold;
   transition: all 0.2s ease;
 }
 
 .dashboard a[href="logout.php"]:hover {
-  background-color: #ff4d4d;
-  color: white !important;
-  box-shadow: 0 4px 12px rgba(255, 77, 77, 0.3);
+  background-color: #ffffff;
+  color: #dd2476 !important; /* Text flips to theme color on white hover inversion */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }

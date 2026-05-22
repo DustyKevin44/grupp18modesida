@@ -38,7 +38,7 @@ function triggerGeolocation() {
       } else {
         locationStatus.textContent = "Unable to retrieve your location.";
       }
-      locationStatus.style.color = "#ff4d4d";
+      locationStatus.style.color = "#ffffff";
     },
   );
 }
