@@ -123,41 +123,45 @@ function formatAddress(raw) {
   if (name) return [name, streetWithNumber, aCity, aCountry].filter(Boolean).join(", ");
   return [streetWithNumber, aCity, aCountry].filter(Boolean).join(", ");
 }
+
 // 3. Form Submission Handling
-form.addEventListener("submit", async function (e) {
-  e.preventDefault();
+if (form) {
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-  const query = searchInput.value.trim();
+    const query = searchInput.value.trim();
 
-  // Case A: User typed a location
-  if (query !== "") {
-    if (locationDataInput.value !== "") {
-      form.submit();
+    // Case A: User typed a location
+    if (query !== "") {
+      if (locationDataInput.value !== "") {
+        form.submit();
+        return;
+      }
+
+      const results = await provider.search({ query: query });
+      if (results.length > 0) {
+        const topResult = results[0];
+        const placeType =
+          topResult.raw?.type || topResult.raw?.addresstype || "unknown";
+
+        const structuredData = {
+          type: "search",
+          label: formatAddress(topResult.raw),
+          lat: topResult.y,
+          lon: topResult.x,
+          place_type: placeType,
+        };
+
+        locationDataInput.value = JSON.stringify(structuredData);
+        form.submit();
+      } else {
+        alert("Please select or type a valid, recognizable location.");
+      }
+
       return;
     }
 
-    const results = await provider.search({ query: query });
-    if (results.length > 0) {
-      const topResult = results[0];
-      const placeType =
-        topResult.raw?.type || topResult.raw?.addresstype || "unknown";
-
-      const structuredData = {
-        type: "search",
-        label: formatAddress(topResult.raw),
-        lat: topResult.y,
-        lon: topResult.x,
-        place_type: placeType,
-      };
-
-      locationDataInput.value = JSON.stringify(structuredData);
-      form.submit();
-    } else {
-      alert("Please select or type a valid, recognizable location.");
-    }
-  }
-  // Case B: User left it blank. Fetch browser GPS location.
-  else {
+    // Case B: User left it blank. Fetch browser GPS location.
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -183,5 +187,5 @@ form.addEventListener("submit", async function (e) {
         "Your browser does not support geolocation. Please type a location.",
       );
     }
-  }
-});
+  });
+}

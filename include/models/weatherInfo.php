@@ -13,7 +13,7 @@
  */
 
 /* ── AJAX endpoint ─────────────────────────────────────────────────────── */
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+if (realpath(__FILE__) === realpath($_SERVER['SCRIPT_FILENAME']) && $_SERVER["REQUEST_METHOD"] === "POST") {
     header("Content-Type: application/json");
 
     $data = json_decode(file_get_contents("php://input"), true) ?? [];
