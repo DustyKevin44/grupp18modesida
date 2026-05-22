@@ -95,7 +95,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['location_data'])) {
 }
 ?>
 
-<?php require_once "include/views/_header.php"; ?>
+<?php
+require_once "include/views/_header.php";
+weatherIncludes(); // Loads Leaflet + GeoSearch JS required by autocomplete.js
+?>
 
 <div class="center">
     <div class="post-container">
