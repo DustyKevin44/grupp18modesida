@@ -10,7 +10,6 @@ weatherIncludes();
     <h2>Clothing Forecast</h2>
     <p class="subtitle">Pick a day and place — we'll show you what people wore.</p>
 
-    <!-- ── Date slider ───────────────────────────────────────────────── -->
     <label for="date-slider">Select a date:</label>
     <input type="range" id="date-slider" min="0" max="7" value="0" step="1" list="cf-ticks">
     <datalist id="cf-ticks">
@@ -22,14 +21,12 @@ weatherIncludes();
     </datalist>
     <div id="date-preview">Today</div>
 
-    <!-- ── Weather banner (shown once forecast loads) ────────────────── -->
     <div id="weather-banner" style="display:none;">
       <span id="wb-icon"></span>
       <span id="wb-label"></span>
       <span id="wb-temp"></span>
     </div>
 
-    <!-- ── Location toggle ───────────────────────────────────────────── -->
     <div class="location-group">
       <label class="checkbox-container">
         <input type="checkbox" id="use-location" checked>
@@ -38,7 +35,6 @@ weatherIncludes();
       <div id="location-status"></div>
     </div>
 
-    <!-- ── Manual location search (hidden when GPS active) ───────────── -->
     <div id="search-container" class="hidden" style="position:relative; margin-top:12px;">
       <label for="locationSearch">Location:</label>
       <input type="text" id="locationSearch"
@@ -48,7 +44,6 @@ weatherIncludes();
       <div id="searchResults" class="search-results-box"></div>
     </div>
 
-    <!-- ── Category filter (optional) ───────────────────────────────── -->
     <label for="category-select">Category (optional):</label>
     <select id="category-select">
       <option value="">Any</option>
@@ -62,9 +57,20 @@ weatherIncludes();
       <option value="other">Other</option>
     </select>
 
+    <!--
+      locationData hidden input is required by autocomplete.js —
+      it writes the selected location JSON here.
+    -->
     <input type="hidden" id="locationData">
 
-    <button id="find-btn" disabled>Loading location…</button>
+    <!--
+      postForm dummy form is required by autocomplete.js —
+      it calls form.addEventListener("submit", ...) and form.submit().
+      We intercept submit below so nothing actually navigates.
+    -->
+    <form id="postForm" onsubmit="return false;"></form>
+
+    <button id="find-btn">Find outfits</button>
 
     <hr>
     <div id="cf-results"></div>
@@ -72,40 +78,58 @@ weatherIncludes();
   </div>
 </div>
 
+<!--
+  Load currentLocation.js first — it reads #use-location, #location-status,
+  #search-container, #locationSearch and stores coords in userLatitude /
+  userLongitude on the script's own scope. We reach those via the getGPSCoords()
+  bridge defined below BEFORE the script loads.
+-->
+<script>
+  // Bridge: currentLocation.js writes to these module-scoped vars.
+  // We expose a getter so the rest of our code can read them.
+  // Must be defined BEFORE currentLocation.js runs.
+  window._cf_getGPSCoords = function () {
+    return (typeof userLatitude !== "undefined" && userLatitude !== null)
+      ? { lat: userLatitude, lon: userLongitude }
+      : null;
+  };
+</script>
+
 <script src="include/models/currentLocation.js"></script>
+
+<!--
+  autocomplete.js writes the chosen location as JSON into #locationData.
+  It also binds to #postForm submit — our dummy form + onsubmit=false
+  prevents any navigation.
+-->
 <script src="include/models/autocomplete.js"></script>
-<script src="include/models/dateSelector.js"></script>
 
 <script>
 (function () {
   /* ── State ──────────────────────────────────────────────────────────── */
-  let forecast      = null;   // array[0..7] from weatherInfo.php
-  let gpsCoords     = null;   // {lat, lon} raw GPS
-  let manualCoords  = null;   // {lat, lon, label} from autocomplete
-  let useGPS        = true;
+  let forecast     = null;
+  let useGPS       = true;
 
-  /* ── DOM refs ───────────────────────────────────────────────────────── */
-  const slider      = document.getElementById("date-slider");
-  const datePrev    = document.getElementById("date-preview");
-  const banner      = document.getElementById("weather-banner");
-  const wbIcon      = document.getElementById("wb-icon");
-  const wbLabel     = document.getElementById("wb-label");
-  const wbTemp      = document.getElementById("wb-temp");
-  const useLocCb    = document.getElementById("use-location");
-  const searchCont  = document.getElementById("search-container");
-  const locStatus   = document.getElementById("location-status");
-  const findBtn     = document.getElementById("find-btn");
-  const resultsDiv  = document.getElementById("cf-results");
+  /* ── DOM ────────────────────────────────────────────────────────────── */
+  const slider     = document.getElementById("date-slider");
+  const datePrev   = document.getElementById("date-preview");
+  const banner     = document.getElementById("weather-banner");
+  const wbIcon     = document.getElementById("wb-icon");
+  const wbLabel    = document.getElementById("wb-label");
+  const wbTemp     = document.getElementById("wb-temp");
+  const useLocCb   = document.getElementById("use-location");
+  const searchCont = document.getElementById("search-container");
+  const findBtn    = document.getElementById("find-btn");
+  const resultsDiv = document.getElementById("cf-results");
 
-  /* ── Emoji map (matches wmoToLabel() in weatherInfo.php) ────────────── */
   const EMOJI = {
-    "Clear sky":                      "☀️",
-    "Mainly clear / Partly cloudy":   "⛅",
-    "Overcast":                       "☁️",
-    "Foggy":                          "🌫️",
-    "Rainy":                          "🌧️",
-    "Snowy":                          "❄️",
-    "Thunderstorm":                   "⛈️",
+    "Clear sky":                    "☀️",
+    "Mainly clear / Partly cloudy": "⛅",
+    "Overcast":                     "☁️",
+    "Foggy":                        "🌫️",
+    "Rainy":                        "🌧️",
+    "Snowy":                        "❄️",
+    "Thunderstorm":                 "⛈️",
   };
 
   /* ── Helpers ────────────────────────────────────────────────────────── */
@@ -114,36 +138,46 @@ weatherIncludes();
     if (n === 1) return "Tomorrow";
     const d = new Date();
     d.setDate(d.getDate() + n);
-    return d.toLocaleDateString(undefined, { weekday:"long", month:"short", day:"numeric" });
+    return d.toLocaleDateString(undefined,
+      { weekday: "long", month: "short", day: "numeric" });
   }
 
-  function readyCoords() {
-    // City-level for GPS (1 decimal ≈ 11 km); street-level for manual (full precision)
-    if (useGPS && gpsCoords)    return { lat: +gpsCoords.lat.toFixed(1),
-                                         lon: +gpsCoords.lon.toFixed(1), label: null };
-    if (!useGPS && manualCoords) return manualCoords;
-    return null;
+  // Read whichever coords are currently active.
+  function activeCoords() {
+    if (useGPS) {
+      // currentLocation.js stores these as module-level vars; read via bridge.
+      const gps = window._cf_getGPSCoords();
+      if (!gps) return null;
+      // City-level: round to 1 decimal (~11 km) — no street sent to search.php
+      return { lat: +gps.lat.toFixed(1), lon: +gps.lon.toFixed(1), label: null };
+    } else {
+      // autocomplete.js writes JSON into #locationData on selection.
+      const raw = document.getElementById("locationData").value;
+      if (!raw) return null;
+      try {
+        const loc = JSON.parse(raw);
+        if (loc.lat && loc.lon) {
+          // Street-level: full precision + label for location filter.
+          return { lat: loc.lat, lon: loc.lon, label: loc.label ?? null };
+        }
+      } catch (e) {}
+      return null;
+    }
   }
 
-  function enableButton() {
-    const ok = readyCoords() !== null;
-    findBtn.disabled = !ok;
-    findBtn.textContent = ok ? "Find outfits" : "Waiting for location…";
-  }
-
-  /* ── Fetch forecast from weatherInfo.php ────────────────────────────── */
+  /* ── Forecast ───────────────────────────────────────────────────────── */
   async function loadForecast() {
-    const coords = readyCoords();
-    if (!coords) return;
+    const c = activeCoords();
+    if (!c) return;
 
     banner.style.display = "none";
     forecast = null;
 
     try {
       const res = await fetch("include/models/weatherInfo.php", {
-        method: "POST",
+        method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lat: coords.lat, lon: coords.lon, days: 7 }),
+        body:    JSON.stringify({ lat: c.lat, lon: c.lon, days: 7 }),
       });
       if (!res.ok) return;
       forecast = await res.json();
@@ -159,148 +193,135 @@ weatherIncludes();
     if (!day) return;
     wbIcon.textContent  = EMOJI[day.weather] ?? "🌡️";
     wbLabel.textContent = day.weather;
-    wbTemp.textContent  = `${day.tempMin}° – ${day.tempMax}°C`;
+    wbTemp.textContent  = `${day.tempMin}°–${day.tempMax}°C`;
     banner.style.display = "flex";
   }
 
-  /* ── Fetch posts from search.php (reuses its POST endpoint) ─────────── */
+  /* ── Posts (reuses search.php POST endpoint) ────────────────────────── */
   async function fetchPosts(day, category, locationLabel) {
     const payload = {
-      weather:  day.weather,
-      tempMin:  day.tempMin,
-      tempMax:  day.tempMax,
+      weather: day.weather,
+      tempMin: day.tempMin,
+      tempMax: day.tempMax,
     };
     if (category)      payload.type     = category;
     if (locationLabel) payload.location = JSON.stringify({ label: locationLabel });
 
     const res = await fetch("search.php", {
-      method: "POST",
+      method:  "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body:    JSON.stringify(payload),
     });
-    if (!res.ok) throw new Error("search.php error " + res.status);
+    if (!res.ok) throw new Error("search.php " + res.status);
     return res.json();
   }
 
-  /* ── Render posts ───────────────────────────────────────────────────── */
   function renderPosts(posts) {
     resultsDiv.innerHTML = "";
-
     if (!posts.length) {
       resultsDiv.innerHTML =
-        "<p style='color:orange;'>No posts found for this day's weather. Try a different date or category.</p>";
+        "<p style='color:orange;'>No posts found for this weather. Try another date or category.</p>";
       return;
     }
-
-    resultsDiv.innerHTML = `<p style="color:green;">Found ${posts.length} post(s)</p>`;
-
+    resultsDiv.innerHTML = `<p style='color:green;'>Found ${posts.length} post(s)</p>`;
     posts.forEach(post => {
-      const el  = document.createElement("div");
+      const el = document.createElement("div");
       el.className = "post";
-
       const imgs = post.ImagePaths
         ? post.ImagePaths.split(",")
-            .map(p => `<img src="${p}" style="max-width:200px; margin:5px;">`)
+            .map(p => `<img src="${p}" style="max-width:200px;margin:5px;">`)
             .join("")
         : "";
-
       el.innerHTML = `
         <h3>${post.Type ?? "Unknown"}</h3>
         <p>${post.Description ?? ""}</p>
         <p><b>Weather:</b> ${post.Weather ?? "-"}</p>
         <p><b>Temperature:</b> ${post.Temperature ?? "-"}°C</p>
         <p><b>Location:</b> ${post.Adress ?? "-"}</p>
-        <div>${imgs}</div>
-        <hr>`;
-
+        <div>${imgs}</div><hr>`;
       resultsDiv.appendChild(el);
     });
   }
 
-  /* ── Event: slider ──────────────────────────────────────────────────── */
+  /* ── Events ─────────────────────────────────────────────────────────── */
   slider.addEventListener("input", () => {
     datePrev.textContent = dayLabel(parseInt(slider.value, 10));
-    renderBanner();   // forecast already loaded; just re-render banner for new day
+    renderBanner(); // forecast already loaded, just re-render for new day
   });
 
-  /* ── Event: GPS toggle ──────────────────────────────────────────────── */
+  // currentLocation.js already handles the checkbox toggle (show/hide
+  // search-container, start geolocation). We only need to track the state
+  // change here so activeCoords() knows which branch to use.
   useLocCb.addEventListener("change", () => {
     useGPS = useLocCb.checked;
-    searchCont.classList.toggle("hidden", useGPS);
     forecast = null;
     banner.style.display = "none";
-    enableButton();
-    if (useGPS && gpsCoords) loadForecast();
+    // If switching back to GPS and coords are ready, reload forecast.
+    if (useGPS && window._cf_getGPSCoords()) loadForecast();
   });
 
-  /* ── Event: find button ─────────────────────────────────────────────── */
-  findBtn.addEventListener("click", async () => {
-    if (!forecast) { resultsDiv.innerHTML = "<p>Forecast not loaded yet.</p>"; return; }
+  // #locationData is updated synchronously by autocomplete.js when a result
+  // is clicked. We watch it with a MutationObserver so we can auto-load the
+  // forecast the moment a manual location is selected.
+  const locationDataEl = document.getElementById("locationData");
+  new MutationObserver(() => {
+    if (!useGPS && locationDataEl.value) loadForecast();
+  }).observe(locationDataEl, { attributes: true, attributeFilter: ["value"] });
 
-    const offset   = parseInt(slider.value, 10);
-    const day      = forecast[offset];
+  // autocomplete.js sets locationData.value via JS assignment, not setAttribute,
+  // so MutationObserver won't fire. Patch the value setter instead.
+  const nativeDescriptor = Object.getOwnPropertyDescriptor(
+    HTMLInputElement.prototype, "value"
+  );
+  Object.defineProperty(locationDataEl, "value", {
+    get() { return nativeDescriptor.get.call(this); },
+    set(v) {
+      nativeDescriptor.set.call(this, v);
+      if (!useGPS && v) loadForecast();
+    },
+  });
+
+  findBtn.addEventListener("click", async () => {
+    const coords = activeCoords();
+
+    // If GPS is selected but coords aren't ready yet, load forecast first.
+    if (!forecast && coords) {
+      await loadForecast();
+    }
+
+    if (!forecast) {
+      resultsDiv.innerHTML = useGPS
+        ? "<p style='color:orange;'>Still waiting for location. Please allow location access and try again.</p>"
+        : "<p style='color:orange;'>Please select a location first.</p>";
+      return;
+    }
+
+    const day      = forecast[parseInt(slider.value, 10)];
     const category = document.getElementById("category-select").value;
-    const coords   = readyCoords();
 
     resultsDiv.innerHTML = "<p>Searching…</p>";
-
     try {
-      const posts = await fetchPosts(day, category, coords?.label ?? null);
-      renderPosts(posts);
+      renderPosts(await fetchPosts(day, category, coords?.label ?? null));
     } catch (e) {
       console.error(e);
       resultsDiv.innerHTML = "<p style='color:red;'>Search failed. Please try again.</p>";
     }
   });
 
-  /* ── GPS resolution (called by currentLocation.js OR inline below) ─── */
-  window.onGPSResolved = function ({ lat, lon, city }) {
-    gpsCoords = { lat, lon };
-    locStatus.textContent = `📍 ${city ?? "Location detected"}`;
-    enableButton();
-    if (useGPS) loadForecast();
-  };
+  /* ── Poll for GPS coords on load ────────────────────────────────────── */
+  // currentLocation.js fires geolocation asynchronously. We poll every 500 ms
+  // until coords appear (max 10 s), then load the forecast automatically.
+  let pollCount = 0;
+  const pollGPS = setInterval(() => {
+    pollCount++;
+    if (pollCount > 20) { clearInterval(pollGPS); return; } // 10 s timeout
 
-  /* ── Autocomplete selection (called by autocomplete.js) ─────────────── */
-  window.onLocationSelected = function ({ lat, lon, label }) {
-    manualCoords = { lat, lon, label };
-    // Also keep locationData in sync in case autocomplete.js reads it
-    const ld = document.getElementById("locationData");
-    if (ld) ld.value = JSON.stringify({ label, lat, lon });
-    enableButton();
-    if (!useGPS) loadForecast();
-  };
+    if (useGPS && window._cf_getGPSCoords()) {
+      clearInterval(pollGPS);
+      loadForecast();
+    }
+  }, 500);
 
-  /* ── Bootstrap GPS immediately ──────────────────────────────────────── */
-  if (navigator.geolocation) {
-    locStatus.textContent = "Detecting location…";
-    navigator.geolocation.getCurrentPosition(
-      pos => {
-        const { latitude: lat, longitude: lon } = pos.coords;
-        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
-          .then(r => r.json())
-          .then(d => {
-            const city = d.address?.city || d.address?.town
-                       || d.address?.village || "Your location";
-            window.onGPSResolved({ lat, lon, city });
-          })
-          .catch(() => window.onGPSResolved({ lat, lon, city: "Your location" }));
-      },
-      () => {
-        locStatus.textContent = "⚠️ Could not get location — please search manually.";
-        useLocCb.checked = false;
-        useGPS = false;
-        searchCont.classList.remove("hidden");
-        enableButton();
-      },
-      { timeout: 8000 }
-    );
-  } else {
-    locStatus.textContent = "GPS not supported — please search manually.";
-    useLocCb.checked = false;
-    useGPS = false;
-    searchCont.classList.remove("hidden");
-  }
 })();
 </script>
 
