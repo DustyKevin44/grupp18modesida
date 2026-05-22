@@ -76,7 +76,7 @@ weatherIncludes();
   <div class="post-container">
 
     <h2>Search Posts</h2>
-
+    <form>
     <label>Keyword:</label>
     <input type="text" id="query">
 
@@ -118,9 +118,8 @@ weatherIncludes();
     <input type="hidden" id="locationData">
     <span id="locationCheckmark" style="color:green; display:none;"> ✓ Validated</span>
 
-    <button id="searchBtn">Search</button>
-
-    <hr>
+    <button id="searchBtn" class="submit-btn">Search</button>
+    </form>
 
     <div id="results"></div>
 

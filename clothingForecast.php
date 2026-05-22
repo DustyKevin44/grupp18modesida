@@ -8,6 +8,7 @@ weatherIncludes();
   <div class="post-container">
 
     <h2>Clothing Forecast</h2>
+    <form>
     <p class="subtitle">Pick a day and place — we'll show you what people wore.</p>
 
     <!-- ── Date slider ───────────────────────────────────────────────── -->
@@ -64,9 +65,9 @@ weatherIncludes();
 
     <input type="hidden" id="locationData">
 
-    <button id="find-btn" disabled>Loading location…</button>
+    <button class="submit-btn" id="find-btn" disabled>Loading location…</button>
+    </form>
 
-    <hr>
     <div id="cf-results"></div>
 
   </div>
