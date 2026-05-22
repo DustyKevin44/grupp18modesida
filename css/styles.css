@@ -412,6 +412,21 @@ form textarea {
   transform: translateY(-1px);
 }
 
+/* Delete button styling used on dashboard post cards */
+.delete-btn {
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #dd2476;
+  background: transparent;
+  color: #dd2476;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background: #ffefef;
+}
+
 .posts-section {
   display: flex;
   flex-direction: column;

@@ -8,15 +8,22 @@ if (!isset($_SESSION['user_id'])) {
 }
 $currentUserId = $_SESSION['user_id'] ?? null;
 
+$posts = [];
+$isAdmin = false;
 if ($currentUserId) {
+    $permStmt = $pdo->prepare("SELECT Permission FROM User WHERE ID = ?");
+    $permStmt->execute([$currentUserId]);
+    $permRow = $permStmt->fetch(PDO::FETCH_ASSOC);
+    $isAdmin = ($permRow && isset($permRow['Permission']) && $permRow['Permission'] === 'admin');
 
-    $stmt = $pdo->prepare("
-        SELECT * FROM Post
-        WHERE UserID = ?
-        ORDER BY ID DESC
-    ");
+    if ($isAdmin) {
+        $stmt = $pdo->prepare("SELECT * FROM Post ORDER BY ID DESC");
+        $stmt->execute();
+    } else {
+        $stmt = $pdo->prepare("SELECT * FROM Post WHERE UserID = ? ORDER BY ID DESC");
+        $stmt->execute([$currentUserId]);
+    }
 
-    $stmt->execute([$currentUserId]);
     $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
@@ -32,13 +39,13 @@ require_once "include/views/_header.php";
         </div>
 
         <div class="post-container">
-            <h2>My posts</h2>
+            <h2><?= $isAdmin ? 'All posts' : 'My posts' ?></h2>
 
             <div class="posts-section">
             <?php if (!empty($posts)): ?>
                 <?php foreach ($posts as $post): ?>
 
-                    <div class="post-card">
+                    <div class="post-card" data-post-id="<?= htmlspecialchars($post['ID']) ?>">
 
                         <div class="post-header">
                             <strong><?= htmlspecialchars($post['Type']) ?></strong>
@@ -71,6 +78,10 @@ require_once "include/views/_header.php";
                             <?php endforeach; ?>
                         </div>
 
+                        <div style="margin-top:8px; display:flex; justify-content:flex-end; gap:8px;">
+                            <button class="delete-btn" data-post-id="<?= htmlspecialchars($post['ID']) ?>">Delete</button>
+                        </div>
+
                     </div>
 
                 <?php endforeach; ?>
@@ -80,5 +91,39 @@ require_once "include/views/_header.php";
             </div>
     </div>
     </div>
+
+<script>
+document.addEventListener('click', async function (e) {
+    if (!e.target.matches('.delete-btn')) return;
+    const btn = e.target;
+    const postId = btn.getAttribute('data-post-id');
+    if (!postId) return;
+    if (!confirm('Are you sure you want to delete this post? This cannot be undone.')) return;
+
+    btn.disabled = true;
+    try {
+        const form = new FormData();
+        form.append('post_id', postId);
+
+        const res = await fetch('delete_post.php', {
+            method: 'POST',
+            body: form,
+        });
+        const data = await res.json();
+        if (data && data.success) {
+            // remove card from DOM
+            const card = btn.closest('.post-card');
+            if (card) card.remove();
+        } else {
+            alert('Delete failed: ' + (data.message || 'unknown error'));
+            btn.disabled = false;
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Network error while deleting post');
+        btn.disabled = false;
+    }
+});
+</script>
 
 <?php require_once "include/views/_footer.php"; ?>
