@@ -76,7 +76,7 @@ weatherIncludes();
   <div class="post-container">
 
     <h2>Search Posts</h2>
-    <form>
+    <form id="searchForm">
     <label>Keyword:</label>
     <input type="text" id="query">
 
@@ -118,7 +118,7 @@ weatherIncludes();
     <input type="hidden" id="locationData">
     <span id="locationCheckmark" class="location-checkmark"> ✓ Validated</span>
 
-    <button id="searchBtn" class="submit-btn">Search</button>
+    <button type="button" id="searchBtn" class="submit-btn">Search</button>
     </form>
 
     <div id="results" class="posts-section"></div>
@@ -127,7 +127,13 @@ weatherIncludes();
 </div>
 
 <script>
-  document.getElementById("searchBtn").addEventListener("click", async () => {
+  const searchForm = document.getElementById("searchForm");
+  if (searchForm) {
+    searchForm.addEventListener("submit", (event) => event.preventDefault());
+  }
+
+  document.getElementById("searchBtn").addEventListener("click", async (e) => {
+    e.preventDefault();
     const resultsDiv = document.getElementById("results");
     resultsDiv.innerHTML = "<p class='message-info'>Searching...</p>";
 
