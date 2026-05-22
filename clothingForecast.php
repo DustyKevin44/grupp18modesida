@@ -8,6 +8,7 @@ weatherIncludes();
   <div class="post-container">
 
     <h2>Clothing Forecast</h2>
+    <form>
     <p class="subtitle">Pick a day and place — we'll show you what people wore.</p>
 
     <label for="date-slider">Select a date:</label>
@@ -72,7 +73,6 @@ weatherIncludes();
 
     <button id="find-btn">Find outfits</button>
 
-    <hr>
     <div id="cf-results"></div>
 
   </div>
