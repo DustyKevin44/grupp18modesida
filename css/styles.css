@@ -1,7 +1,10 @@
 body {
   margin: 0;
   padding-bottom: 80px; /* Increased slightly to prevent your expanding content from hugging the fixed footer */
-  font-family: Arial, sans-serif;
+  font-family: "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-smooth: always;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   background-color: #fcf8f5; /* Warm, off-white sunset cream backdrop */
 }
 
@@ -156,6 +159,18 @@ textarea {
   height: auto; /* Prevents the header from eating up almost all container space */
   margin: 0 0 1rem 0; /* Gives a healthy space below the title instead */
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.post-container:empty,
+.posts-section:empty {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
 }
 
 form {
@@ -429,86 +444,101 @@ form textarea {
 
 .posts-section {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
+  max-width: 1180px;
   gap: 1.5rem;
   margin: 1rem auto;
+  padding: 0 1rem;
 }
 
 /* Standardized Post Card with Fixed Dimensions */
 .post-card,
 .post {
-  background: #fff;
-  border: 1px solid #f5eae6; /* Soft warm border */
-  border-radius: 12px;
-  padding: 15px;
-  width: 500px;
-  max-width: 90vw;
-  height: 550px;
+  background: linear-gradient(135deg, #fff7f3 0%, #fffcf9 100%);
+  border: 2px solid #f5eae6; /* Soft warm border */
+  border-radius: 16px;
+  padding: 20px;
+  width: 320px;
+  min-width: 320px;
+  max-width: 320px;
+  height: 480px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 12px rgba(221, 36, 118, 0.05); /* Soft themed shadow */
+  box-shadow:
+    0 8px 24px rgba(221, 36, 118, 0.12),
+    0 2px 8px rgba(255, 81, 47, 0.08);
   box-sizing: border-box;
+  overflow: hidden;
+}
+
+.post-main {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .post-header,
 .post > h3 {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: #ff512f; /* Highlights names/titles with sunset orange */
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(90deg, #ff512f 0%, #dd2476 100%) 1;
+}
+
+.post-header strong {
+  color: #ff512f;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.post-header span {
+  color: #8c7670;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
 }
 
 .post > h3 {
-  flex-direction: column;
-  justify-content: flex-start;
-  margin-bottom: 5px;
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 8px;
   font-size: 1.1rem;
 }
 
-/* Description with Overflow Handling */
+/* Description styling */
 .post-desc,
 .post > p:first-of-type {
-  margin-bottom: 10px;
-  color: #4a3630;
-  flex: 1;
-  overflow-y: auto;
-  max-height: 150px;
-  padding-right: 5px;
+  margin-bottom: 12px;
+  color: #2d1912;
+  padding-right: 0;
   word-wrap: break-word;
-}
-
-/* Scrollbar styling for description */
-.post-desc::-webkit-scrollbar,
-.post > p:first-of-type::-webkit-scrollbar {
-  width: 6px;
-}
-
-.post-desc::-webkit-scrollbar-track,
-.post > p:first-of-type::-webkit-scrollbar-track {
-  background: #f5eae6;
-  border-radius: 3px;
-}
-
-.post-desc::-webkit-scrollbar-thumb,
-.post > p:first-of-type::-webkit-scrollbar-thumb {
-  background: #dd2476;
-  border-radius: 3px;
+  font-size: 0.95rem;
+  line-height: 1.4;
 }
 
 .post-meta,
 .post > p {
   display: flex;
-  gap: 10px;
-  font-size: 14px;
+  gap: 12px;
+  font-size: 0.9rem;
   color: #8c7670;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   align-items: center;
   flex-wrap: wrap;
+  padding: 8px 0;
 }
 
 .post > p:last-of-type {
@@ -516,13 +546,14 @@ form textarea {
 }
 
 .private-tag {
-  background: #ffeae6; /* Pale warm pink tint */
+  background: linear-gradient(135deg, #ffd4cc, #ffeae6);
   color: #dd2476; /* Vibrant magenta warning tag */
-  padding: 2px 6px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
   white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(221, 36, 118, 0.1);
 }
 
 /* Post Images Container */
@@ -530,21 +561,39 @@ form textarea {
 .post > div {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
   overflow-y: auto;
-  max-height: 200px;
-  padding-right: 5px;
+  max-height: 250px;
+  padding-right: 0;
+}
+
+.post-images::-webkit-scrollbar,
+.post > div::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.post-images,
+.post > div {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .post-images img,
 .post img {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid #f5eae6;
-  flex-shrink: 0;
+  width: 90%;
+  max-width: 280px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  border-radius: 10px;
+  border: 2px solid #f5eae6;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  max-height: none;
 }
 
 /* HR separator styling */
@@ -600,7 +649,7 @@ form textarea {
 }
 
 /* Styled Logout Button instead of just text */
-.dashboard a[href="logout.php"] {
+.dashboard a {
   display: inline-block;
   padding: 0.75rem 2rem;
   border: 2px solid #ffffff; /* Clean white border over the gradient background */
@@ -612,7 +661,7 @@ form textarea {
   transition: all 0.2s ease;
 }
 
-.dashboard a[href="logout.php"]:hover {
+.dashboard a:hover {
   background-color: #ffffff;
   color: #dd2476 !important; /* Text flips to theme color on white hover inversion */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);

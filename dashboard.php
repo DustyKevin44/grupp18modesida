@@ -35,10 +35,10 @@ require_once "include/views/_header.php";
             <h2>Hello, <?= htmlspecialchars($_SESSION['username']); ?>!</h2>
             <p>You have successfully logged in</p>
             
-            <p><a href="logout.php" style="color: red;">Log Out</a></p>
+            <p><a href="logout.php">Log Out</a></p>
         </div>
 
-        <div class="post-container">
+        <div class="post-container" <?php echo empty($posts) ? 'style="display: none;"' : ''; ?>>
             <h2><?= $isAdmin ? 'All posts' : 'My posts' ?></h2>
 
             <div class="posts-section">
@@ -52,30 +52,32 @@ require_once "include/views/_header.php";
                             <span><?= htmlspecialchars($post['Adress']) ?></span>
                         </div>
 
-                        <p class="post-desc">
-                            <?= nl2br(htmlspecialchars($post['Description'])) ?>
-                        </p>
+                        <div class="post-main">
+                            <!-- IMAGES -->
+                            <div class="post-images">
+                                <?php
+                                $imgStmt = $pdo->prepare("SELECT FilePath FROM Image WHERE PostID = ?");
+                                $imgStmt->execute([$post['ID']]);
+                                $images = $imgStmt->fetchAll(PDO::FETCH_ASSOC);
+                                ?>
 
-                        <div class="post-meta">
-                            <span>🌤 <?= htmlspecialchars($post['Weather']) ?></span>
-                            <span>🌡 <?= htmlspecialchars($post['Temperature']) ?>°C</span>
+                                <?php foreach ($images as $img): ?>
+                                    <img src="<?= htmlspecialchars($img['FilePath']) ?>" alt="Post image">
+                                <?php endforeach; ?>
+                            </div>
 
-                            <?php if ($post['Private']): ?>
-                                <span class="private-tag">Private</span>
-                            <?php endif; ?>
-                        </div>
+                            <div class="post-meta">
+                                <span>🌤 <?= htmlspecialchars($post['Weather']) ?></span>
+                                <span>🌡 <?= htmlspecialchars($post['Temperature']) ?>°C</span>
 
-                        <!-- IMAGES -->
-                        <div class="post-images">
-                            <?php
-                            $imgStmt = $pdo->prepare("SELECT FilePath FROM Image WHERE PostID = ?");
-                            $imgStmt->execute([$post['ID']]);
-                            $images = $imgStmt->fetchAll(PDO::FETCH_ASSOC);
-                            ?>
+                                <?php if ($post['Private']): ?>
+                                    <span class="private-tag">Private</span>
+                                <?php endif; ?>
+                            </div>
 
-                            <?php foreach ($images as $img): ?>
-                                <img src="<?= htmlspecialchars($img['FilePath']) ?>" alt="Post image">
-                            <?php endforeach; ?>
+                            <p class="post-desc">
+                                <?= nl2br(htmlspecialchars($post['Description'])) ?>
+                            </p>
                         </div>
 
                         <div style="margin-top:8px; display:flex; justify-content:flex-end; gap:8px;">
@@ -85,45 +87,11 @@ require_once "include/views/_header.php";
                     </div>
 
                 <?php endforeach; ?>
-            <?php else: ?>
-                <p>No posts yet.</p>
             <?php endif; ?>
             </div>
     </div>
     </div>
 
-<script>
-document.addEventListener('click', async function (e) {
-    if (!e.target.matches('.delete-btn')) return;
-    const btn = e.target;
-    const postId = btn.getAttribute('data-post-id');
-    if (!postId) return;
-    if (!confirm('Are you sure you want to delete this post? This cannot be undone.')) return;
-
-    btn.disabled = true;
-    try {
-        const form = new FormData();
-        form.append('post_id', postId);
-
-        const res = await fetch('delete_post.php', {
-            method: 'POST',
-            body: form,
-        });
-        const data = await res.json();
-        if (data && data.success) {
-            // remove card from DOM
-            const card = btn.closest('.post-card');
-            if (card) card.remove();
-        } else {
-            alert('Delete failed: ' + (data.message || 'unknown error'));
-            btn.disabled = false;
-        }
-    } catch (err) {
-        console.error(err);
-        alert('Network error while deleting post');
-        btn.disabled = false;
-    }
-});
-</script>
+<script src="include/models/dashboard.js"></script>
 
 <?php require_once "include/views/_footer.php"; ?>
