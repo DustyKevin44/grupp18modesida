@@ -86,10 +86,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['location_data'])) {
                 }
             }
 
-            echo "<div style='color:green; padding:10px; border:1px solid green; background:#e6ffe6;'>Post successfully created!</div>";
+            echo "<div class='message-success'>Post successfully created!</div>";
 
         } catch (PDOException $e) {
-            echo "<div style='color:red; padding:10px; border:1px solid red; background:#ffe6e6;'>Database Error: " . htmlspecialchars($e->getMessage()) . "</div>";
+            echo "<div class='message-error'>Database Error: " . htmlspecialchars($e->getMessage()) . "</div>";
         }
     }
 }
@@ -127,11 +127,11 @@ weatherIncludes(); // Loads Leaflet + GeoSearch JS required by autocomplete.js
                 <input type="text" id="locationSearch"
                     placeholder="Search for a place (e.g., University of Michigan)..."
                     style="width:300px;" autocomplete="off">
-                <span id="locationCheckmark" style="color:green; display:none;"> ✓ Validated</span>
+                <span id="locationCheckmark" class="location-checkmark"> ✓ Validated</span>
 
                 <div id="searchResults" class="search-results-box"></div>
 
-                <p style="font-size:0.85em; color:#666;">Leave blank to use your current GPS location.</p>
+                <p class="disclaimer-text">Leave blank to use your current GPS location.</p>
             </div>
 
             <button type="submit" style="margin-top:15px;" class="submit-btn">Create Post</button>

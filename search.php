@@ -116,12 +116,12 @@ weatherIncludes();
     <input type="text" id="locationSearch" autocomplete="off">
     <div id="searchResults"></div>
     <input type="hidden" id="locationData">
-    <span id="locationCheckmark" style="color:green; display:none;"> ✓ Validated</span>
+    <span id="locationCheckmark" class="location-checkmark"> ✓ Validated</span>
 
     <button id="searchBtn" class="submit-btn">Search</button>
     </form>
 
-    <div id="results"></div>
+    <div id="results" class="posts-section"></div>
 
   </div>
 </div>
@@ -129,7 +129,7 @@ weatherIncludes();
 <script>
   document.getElementById("searchBtn").addEventListener("click", async () => {
     const resultsDiv = document.getElementById("results");
-    resultsDiv.innerHTML = "<p>Searching...</p>";
+    resultsDiv.innerHTML = "<p class='message-info'>Searching...</p>";
 
     const tempMin = document.getElementById("tempMin").value;
     const tempMax = document.getElementById("tempMax").value;
@@ -153,7 +153,7 @@ weatherIncludes();
 
       if (!res.ok) {
         console.error("Server error:", await res.text());
-        resultsDiv.innerHTML = "<p>Server error occurred.</p>";
+        resultsDiv.innerHTML = "<p class='message-error'>Server error occurred.</p>";
         return;
       }
 
@@ -161,44 +161,48 @@ weatherIncludes();
       try {
         data = JSON.parse(await res.text());
       } catch (e) {
-        resultsDiv.innerHTML = "<p>Invalid server response.</p>";
+        resultsDiv.innerHTML = "<p class='message-error'>Invalid server response.</p>";
         return;
       }
 
       resultsDiv.innerHTML = "";
 
       if (!Array.isArray(data) || data.length === 0) {
-        resultsDiv.innerHTML = "<p style='color:orange;'>No posts found for your filters.</p>";
+        resultsDiv.innerHTML = "<p class='message-warning'>No posts found for your filters.</p>";
         return;
       }
 
-      resultsDiv.innerHTML = `<p style="color:green;">Found ${data.length} post(s)</p>`;
+      resultsDiv.innerHTML = `<p class='message-success'>Found ${data.length} post(s)</p>`;
 
       data.forEach(post => {
         const el = document.createElement("div");
-        el.className = "post";
+        el.className = "post-card";
 
         const images = post.ImagePaths
           ? post.ImagePaths.split(",")
-              .map(path => `<img src="${path}" style="max-width:200px; margin:5px;">`)
+              .map(path => `<img src="${path}" alt="Post image">`)
               .join("")
           : "";
 
         el.innerHTML = `
-          <h3>${post.Type ?? "Unknown"}</h3>
-          <p>${post.Description ?? ""}</p>
-          <p><b>Weather:</b> ${post.Weather ?? "-"}</p>
-          <p><b>Temperature:</b> ${post.Temperature ?? "-"}°C</p>
-          <p><b>Location:</b> ${post.Adress ?? "-"}</p>
-          <div>${images}</div>
-          <hr>`;
+          <div class="post-header">
+            <strong>${post.Type ?? "Unknown"}</strong>
+            <span>${post.Adress ?? "Unknown"}</span>
+          </div>
+          <p class="post-desc">${post.Description ?? ""}</p>
+          <div class="post-meta">
+            <span>🌤 ${post.Weather ?? "-"}</span>
+            <span>🌡 ${post.Temperature ?? "-"}°C</span>
+            ${post.Private ? '<span class="private-tag">Private</span>' : ""}
+          </div>
+          <div class="post-images">${images}</div>`;
 
         resultsDiv.appendChild(el);
       });
 
     } catch (err) {
       console.error("Fetch failed:", err);
-      resultsDiv.innerHTML = "<p style='color:red;'>Network error. Please try again.</p>";
+      resultsDiv.innerHTML = "<p class='message-error'>Network error. Please try again.</p>";
     }
   });
 </script>

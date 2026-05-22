@@ -44,7 +44,6 @@ searchInput.addEventListener(
 
 // Render the results into the dropdown box
 function renderResults(results) {
-
   resultsBox.innerHTML = "";
 
   if (results.length === 0) {
@@ -73,7 +72,7 @@ function renderResults(results) {
       };
 
       locationDataInput.value = JSON.stringify(structuredData);
-      checkmark.style.display = "inline";
+      checkmark.classList.add("visible");
       resultsBox.style.display = "none";
     });
 
@@ -88,7 +87,7 @@ document.addEventListener("click", function (e) {
 });
 
 function resetLocationSelection() {
-  checkmark.style.display = "none";
+  checkmark.classList.remove("visible");
   locationDataInput.value = "";
   resultsBox.innerHTML = "";
   resultsBox.style.display = "none";
@@ -102,9 +101,12 @@ function formatAddress(raw) {
   // Street is usually at index 2, city near the end before country
   const street = parts[2] || null;
   const houseNumber = parts[1] || null;
-  const city = parts.find(p => ["Uppsala", "Stockholm", "Göteborg", "Malmö"].includes(p)) 
-               || parts[parts.length - 4] 
-               || null;
+  const city =
+    parts.find((p) =>
+      ["Uppsala", "Stockholm", "Göteborg", "Malmö"].includes(p),
+    ) ||
+    parts[parts.length - 4] ||
+    null;
   const country = parts[parts.length - 1] || null;
 
   if (!a) {
@@ -113,14 +115,16 @@ function formatAddress(raw) {
     return [name, streetWithNumber, city, country].filter(Boolean).join(", ");
   }
 
-  const name = a.amenity || a.club || a.building || a.tourism || a.leisure || raw.name;
+  const name =
+    a.amenity || a.club || a.building || a.tourism || a.leisure || raw.name;
   const aStreet = a.road;
   const aHouseNumber = a.house_number;
   const aCity = a.city || a.town || a.village;
   const aCountry = a.country;
 
   const streetWithNumber = [aStreet, aHouseNumber].filter(Boolean).join(" ");
-  if (name) return [name, streetWithNumber, aCity, aCountry].filter(Boolean).join(", ");
+  if (name)
+    return [name, streetWithNumber, aCity, aCountry].filter(Boolean).join(", ");
   return [streetWithNumber, aCity, aCountry].filter(Boolean).join(", ");
 }
 // 3. Form Submission Handling

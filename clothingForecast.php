@@ -41,7 +41,7 @@ weatherIncludes();
       <input type="text" id="locationSearch"
              placeholder="e.g. Drottninggatan, Stockholm"
              style="width:300px;" autocomplete="off">
-      <span id="locationCheckmark" style="color:green; display:none;"> ✓ Validated</span>
+      <span id="locationCheckmark" class="location-checkmark"> ✓ Validated</span>
       <div id="searchResults" class="search-results-box"></div>
     </div>
 
@@ -73,7 +73,7 @@ weatherIncludes();
 
     <button id="find-btn" class="submit-btn">Find outfits</button>
 
-    <div id="cf-results"></div>
+    <div id="cf-results" class="posts-section"></div>
 
   </div>
 </div>
@@ -220,25 +220,30 @@ weatherIncludes();
     resultsDiv.innerHTML = "";
     if (!posts.length) {
       resultsDiv.innerHTML =
-        "<p style='color:orange;'>No posts found for this weather. Try another date or category.</p>";
+        "<p class='message-warning'>No posts found for this weather. Try another date or category.</p>";
       return;
     }
-    resultsDiv.innerHTML = `<p style='color:green;'>Found ${posts.length} post(s)</p>`;
+    resultsDiv.innerHTML = `<p class='message-success'>Found ${posts.length} post(s)</p>`;
     posts.forEach(post => {
       const el = document.createElement("div");
-      el.className = "post";
+      el.className = "post-card";
       const imgs = post.ImagePaths
         ? post.ImagePaths.split(",")
-            .map(p => `<img src="${p}" style="max-width:200px;margin:5px;">`)
+            .map(p => `<img src="${p}" alt="Post image">`)
             .join("")
         : "";
       el.innerHTML = `
-        <h3>${post.Type ?? "Unknown"}</h3>
-        <p>${post.Description ?? ""}</p>
-        <p><b>Weather:</b> ${post.Weather ?? "-"}</p>
-        <p><b>Temperature:</b> ${post.Temperature ?? "-"}°C</p>
-        <p><b>Location:</b> ${post.Adress ?? "-"}</p>
-        <div>${imgs}</div><hr>`;
+        <div class="post-header">
+          <strong>${post.Type ?? "Unknown"}</strong>
+          <span>${post.Adress ?? "Unknown"}</span>
+        </div>
+        <p class="post-desc">${post.Description ?? ""}</p>
+        <div class="post-meta">
+          <span>🌤 ${post.Weather ?? "-"}</span>
+          <span>🌡 ${post.Temperature ?? "-"}°C</span>
+          ${post.Private ? '<span class="private-tag">Private</span>' : ""}
+        </div>
+        <div class="post-images">${imgs}</div>`;
       resultsDiv.appendChild(el);
     });
   }
@@ -291,20 +296,20 @@ weatherIncludes();
 
     if (!forecast) {
       resultsDiv.innerHTML = useGPS
-        ? "<p style='color:orange;'>Still waiting for location. Please allow location access and try again.</p>"
-        : "<p style='color:orange;'>Please select a location first.</p>";
+        ? "<p class='message-warning'>Still waiting for location. Please allow location access and try again.</p>"
+        : "<p class='message-warning'>Please select a location first.</p>";
       return;
     }
 
     const day      = forecast[parseInt(slider.value, 10)];
     const category = document.getElementById("category-select").value;
 
-    resultsDiv.innerHTML = "<p>Searching…</p>";
+    resultsDiv.innerHTML = "<p class='message-info'>Searching…</p>";
     try {
       renderPosts(await fetchPosts(day, category, coords?.label ?? null));
     } catch (e) {
       console.error(e);
-      resultsDiv.innerHTML = "<p style='color:red;'>Search failed. Please try again.</p>";
+      resultsDiv.innerHTML = "<p class='message-error'>Search failed. Please try again.</p>";
     }
   });
 

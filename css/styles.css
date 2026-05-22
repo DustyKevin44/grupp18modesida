@@ -414,39 +414,89 @@ form textarea {
 
 .posts-section {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  max-width: 80%;
-  margin: 2rem auto;
+  width: 100%;
+  gap: 1.5rem;
+  margin: 1rem auto;
 }
 
-.post-card {
+/* Standardized Post Card with Fixed Dimensions */
+.post-card,
+.post {
   background: #fff;
   border: 1px solid #f5eae6; /* Soft warm border */
   border-radius: 12px;
   padding: 15px;
-  margin-bottom: 20px;
+  width: 500px;
+  max-width: 90vw;
+  height: 550px;
+  display: flex;
+  flex-direction: column;
   box-shadow: 0 4px 12px rgba(221, 36, 118, 0.05); /* Soft themed shadow */
+  box-sizing: border-box;
 }
 
-.post-header {
+.post-header,
+.post > h3 {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-weight: bold;
   margin-bottom: 10px;
   color: #ff512f; /* Highlights names/titles with sunset orange */
 }
 
-.post-desc {
-  margin-bottom: 10px;
-  color: #4a3630;
+.post > h3 {
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-bottom: 5px;
+  font-size: 1.1rem;
 }
 
-.post-meta {
+/* Description with Overflow Handling */
+.post-desc,
+.post > p:first-of-type {
+  margin-bottom: 10px;
+  color: #4a3630;
+  flex: 1;
+  overflow-y: auto;
+  max-height: 150px;
+  padding-right: 5px;
+  word-wrap: break-word;
+}
+
+/* Scrollbar styling for description */
+.post-desc::-webkit-scrollbar,
+.post > p:first-of-type::-webkit-scrollbar {
+  width: 6px;
+}
+
+.post-desc::-webkit-scrollbar-track,
+.post > p:first-of-type::-webkit-scrollbar-track {
+  background: #f5eae6;
+  border-radius: 3px;
+}
+
+.post-desc::-webkit-scrollbar-thumb,
+.post > p:first-of-type::-webkit-scrollbar-thumb {
+  background: #dd2476;
+  border-radius: 3px;
+}
+
+.post-meta,
+.post > p {
   display: flex;
   gap: 10px;
   font-size: 14px;
   color: #8c7670;
+  margin-bottom: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.post > p:last-of-type {
   margin-bottom: 10px;
 }
 
@@ -457,15 +507,36 @@ form textarea {
   border-radius: 6px;
   font-size: 12px;
   font-weight: bold;
+  white-space: nowrap;
 }
 
-.post-images img {
+/* Post Images Container */
+.post-images,
+.post > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  overflow-y: auto;
+  max-height: 200px;
+  padding-right: 5px;
+}
+
+.post-images img,
+.post img {
   width: 120px;
   height: 120px;
   object-fit: cover;
   border-radius: 8px;
-  margin-right: 5px;
   border: 1px solid #f5eae6;
+  flex-shrink: 0;
+}
+
+/* HR separator styling */
+.post > hr {
+  border: none;
+  border-top: 1px solid #f5eae6;
+  margin: 10px 0;
 }
 
 .dashboard {
@@ -530,4 +601,116 @@ form textarea {
   background-color: #ffffff;
   color: #dd2476 !important; /* Text flips to theme color on white hover inversion */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ── Success & Error Messages ────────────────────────────────────────── */
+.message-success {
+  color: green;
+  padding: 10px;
+  border: 1px solid green;
+  background: #e6ffe6;
+  border-radius: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.message-error {
+  color: red;
+  padding: 10px;
+  border: 1px solid red;
+  background: #ffe6e6;
+  border-radius: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.message-info {
+  color: #0066cc;
+  padding: 10px;
+  border: 1px solid #0066cc;
+  background: #e6f2ff;
+  border-radius: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.message-warning {
+  color: orange;
+  padding: 10px;
+  border: 1px solid orange;
+  background: #fff4e6;
+  border-radius: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+/* ── Form Labels & Styling ────────────────────────────────────────── */
+form label {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: white;
+  font-weight: 500;
+}
+
+form input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+  margin-right: 0.5rem;
+}
+
+/* ── Location Validation Status ────────────────────────────────────── */
+.location-checkmark {
+  color: green;
+  display: none;
+  margin-left: 0.5rem;
+}
+
+.location-checkmark.visible {
+  display: inline;
+}
+
+#location-status {
+  font-size: 0.85rem;
+  color: #ffe0da;
+  min-height: 1.2rem;
+}
+
+/* ── Subtitle Text ────────────────────────────────────────────────── */
+.subtitle {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* ── Weather Banner Styling ────────────────────────────────────────– */
+#weather-banner {
+  display: none;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  color: white;
+  font-weight: 500;
+}
+
+#weather-banner span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#weather-banner span:first-child {
+  font-size: 1.5rem;
+}
+
+/* ── Results Container ────────────────────────────────────────────── */
+#results,
+#cf-results {
+  width: 100%;
+}
+
+#results p,
+#cf-results p {
+  text-align: center;
 }
