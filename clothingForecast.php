@@ -71,7 +71,7 @@ weatherIncludes();
     -->
     <form id="postForm" onsubmit="return false;"></form>
 
-    <button id="find-btn">Find outfits</button>
+    <button id="find-btn" class="submit-btn">Find outfits</button>
 
     <div id="cf-results"></div>
 
