@@ -64,6 +64,7 @@
     if (!c) return;
 
     banner.style.display = "none";
+    banner.classList.add("hidden");
     forecast = null;
 
     try {
@@ -87,6 +88,7 @@
     wbIcon.textContent = EMOJI[day.weather] ?? "🌡️";
     wbLabel.textContent = day.weather;
     wbTemp.textContent = `${day.tempMin}°–${day.tempMax}°C`;
+    banner.classList.remove("hidden");
     banner.style.display = "flex";
   }
 
