@@ -24,7 +24,7 @@ function triggerGeolocation() {
       userLatitude = position.coords.latitude;
       userLongitude = position.coords.longitude;
       locationStatus.textContent = `Location locked (Lat: ${userLatitude.toFixed(2)}, Lon: ${userLongitude.toFixed(2)})`;
-      locationStatus.style.color = "#4df";
+      locationStatus.style.color = "#fff";
     },
     (error) => {
       userLatitude = null;

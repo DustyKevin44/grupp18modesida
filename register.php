@@ -107,96 +107,77 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 require_once "include/views/_header.php";
 ?>
 
-<main style="max-width: 400px; margin: 2rem auto; padding: 1rem; border: 1px solid #ccc; border-radius: 5px;">
-    
-    <h2>Register An Account</h2>
+<div class="center">
+    <div class="post-container">
+        <h2>Register An Account</h2>
 
-    <!-- Error Message -->
-    <?php if (isset($_SESSION['reg_error'])): ?>
-        <div style="color: red; margin-bottom: 1rem;">
-            <?= htmlspecialchars($_SESSION['reg_error']); ?>
-            <?php unset($_SESSION['reg_error']); ?>
-        </div>
-    <?php endif; ?>
+        <!-- Error Message -->
+        <?php if (isset($_SESSION['reg_error'])): ?>
+            <div class="message-error">
+                <?= htmlspecialchars($_SESSION['reg_error']); ?>
+                <?php unset($_SESSION['reg_error']); ?>
+            </div>
+        <?php endif; ?>
 
-    <!-- Success Message -->
-    <?php if (isset($_SESSION['reg_success'])): ?>
-        <div style="color: green; margin-bottom: 1rem;">
-            <?= htmlspecialchars($_SESSION['reg_success']); ?>
-            <?php unset($_SESSION['reg_success']); ?>
-        </div>
-    <?php endif; ?>
+        <!-- Success Message -->
+        <?php if (isset($_SESSION['reg_success'])): ?>
+            <div class="message-success">
+                <?= htmlspecialchars($_SESSION['reg_success']); ?>
+                <?php unset($_SESSION['reg_success']); ?>
+            </div>
+        <?php endif; ?>
 
-    <!-- Registration Form -->
-    <form action="register.php" method="POST">
+        <!-- Registration Form -->
+        <form action="register.php" method="POST">
+            <div>
+                <label for="username">Username:</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    required
+                    maxlength="50"
+                >
+            </div>
 
-        <div style="margin-bottom: 1rem;">
-            <label for="username" style="display: block; margin-bottom: 0.5rem;">
-                Username:
-            </label>
+            <div>
+                <label for="email">Email Address:</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    required
+                    maxlength="255"
+                >
+            </div>
 
-            <input 
-                type="text" 
-                id="username" 
-                name="username" 
-                required
-                maxlength="50"
-                style="width: 100%; padding: 0.5rem;"
+            <div>
+                <label for="password">Password:</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    required
+                    minlength="8"
+                >
+            </div>
+
+            <button 
+                type="submit"
+                class="submit-btn"
             >
-        </div>
+                Register
+            </button>
+        </form>
 
-        <div style="margin-bottom: 1rem;">
-            <label for="email" style="display: block; margin-bottom: 0.5rem;">
-                Email Address:
-            </label>
+        <p class="auth-section-text">
+            Already have an account?
+            <a href="login.php" class="auth-link">Log in here</a>
+        </p>
+    </div>
+</div>
 
-            <input 
-                type="email" 
-                id="email" 
-                name="email" 
-                required
-                maxlength="255"
-                style="width: 100%; padding: 0.5rem;"
-            >
-        </div>
-
-        <div style="margin-bottom: 1rem;">
-            <label for="password" style="display: block; margin-bottom: 0.5rem;">
-                Password:
-            </label>
-
-            <input 
-                type="password" 
-                id="password" 
-                name="password" 
-                required
-                minlength="8"
-                style="width: 100%; padding: 0.5rem;"
-            >
-        </div>
-
-        <button 
-            type="submit"
-            style="
-                padding: 0.5rem 1rem;
-                background-color: #28a745;
-                color: white;
-                border: none;
-                border-radius: 3px;
-                cursor: pointer;
-            "
-        >
-            Register
-        </button>
-
-    </form>
-
-    <p style="margin-top: 1rem; font-size: 0.9rem;">
-        Already have an account?
-        <a href="login.php">Log in here</a>.
-    </p>
-
-</main>
+<?php require_once "include/views/_footer.php"; ?>
 
 <script src="script.js"></script>
 

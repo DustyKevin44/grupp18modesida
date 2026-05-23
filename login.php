@@ -61,13 +61,13 @@ $stmt = $pdo->prepare("SELECT ID, Username, Password, Locked, Permission FROM Us
 require_once "include/views/_header.php"; 
 ?>
 
-
-    <main style="max-width: 400px; margin: 2rem auto; padding: 1rem; border: 1px solid #ccc; border-radius: 5px;">
+<div class="center">
+    <div class="post-container">
         <h2>Login</h2>
         
         <!-- Display error messages if they exist in the session -->
         <?php if (isset($_SESSION['login_error'])): ?>
-            <div style="color: red; margin-bottom: 1rem;">
+            <div class="message-error">
                 <?= htmlspecialchars($_SESSION['login_error']); ?>
                 <?php unset($_SESSION['login_error']); ?>
             </div>
@@ -75,26 +75,23 @@ require_once "include/views/_header.php";
 
         <!-- Note: action points back to this same file (login.php) -->
         <form action="login.php" method="POST">
-            <div style="margin-bottom: 1rem;">
-                <label for="email" style="display: block; margin-bottom: 0.5rem;">Email Address:</label>
-                <input type="email" id="email" name="email" required style="width: 100%; padding: 0.5rem;">
+            <div>
+                <label for="email">Email Address:</label>
+                <input type="email" id="email" name="email" required>
             </div>
 
-            <div style="margin-bottom: 1rem;">
-                <label for="password" style="display: block; margin-bottom: 0.5rem;">Password:</label>
-                <input type="password" id="password" name="password" required style="width: 100%; padding: 0.5rem;">
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
             </div>
 
-            <button type="submit" style="padding: 0.5rem 1rem; background-color: #007BFF; color: white; border: none; border-radius: 3px; cursor: pointer;">
-                Sign In
-            </button>
+            <button type="submit" class="submit-btn">Sign In</button>
         </form>
-        <a href="register.php">No account? Register</a>
-    </main>
-
-    <!-- JavaScript -->
-    <script src="script.js"></script>
-</body>
-</html>
+        
+        <p class="auth-section-text">
+            No account? <a href="register.php" class="auth-link">Register here</a>
+        </p>
+    </div>
+</div>
 
 <?php require_once "include/views/_footer.php"; ?>

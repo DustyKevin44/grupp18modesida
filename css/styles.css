@@ -307,10 +307,10 @@ form textarea {
 }
 
 #search-container {
-  /* Set up a vertical stack that snaps elements to the left */
+  /* Set up a vertical stack that centers elements */
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   justify-content: flex-start;
 
   width: 100%;
@@ -318,10 +318,10 @@ form textarea {
   position: relative;
 }
 
-/* Explicitly left-align the text elements inside the container */
+/* Center align the text elements inside the container */
 #search-container label,
 #search-container p {
-  text-align: left;
+  text-align: center;
   width: 100%;
 }
 
@@ -329,7 +329,8 @@ form textarea {
 .search-results-box {
   position: absolute;
   top: 100%; /* Positions it directly beneath the input field */
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 300px; /* Matches your input field width */
   background-color: #ffffff; /* Swapped from black to match new form style */
   border: 1px solid rgba(221, 36, 118, 0.3);
@@ -777,4 +778,51 @@ form input[type="checkbox"] {
 #results p,
 #cf-results p {
   text-align: center;
+}
+
+/* ── Auth Form Styling ────────────────────────────────────────────── */
+.auth-section-text {
+  text-align: center;
+  color: white;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.auth-link {
+  color: #ffe0da;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+}
+
+/* ── Location Input Styling ────────────────────────────────────────── */
+.location-field-group {
+  margin-top: 15px;
+  position: relative;
+}
+
+.location-input-narrow {
+  width: 300px !important;
+}
+
+/* ── Post Action Buttons ───────────────────────────────────────────── */
+.post-action-buttons {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ── Submit Button Spacing ─────────────────────────────────────────── */
+.submit-btn-spacing {
+  margin-top: 15px;
+}
+
+/* ── Search Container Spacing ──────────────────────────────────────── */
+.search-container-spacing {
+  position: relative;
+  margin-top: 12px;
 }

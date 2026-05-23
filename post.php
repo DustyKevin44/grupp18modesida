@@ -118,27 +118,35 @@ weatherIncludes(); // Loads Leaflet + GeoSearch JS required by autocomplete.js
             </div>
 
             <div>
-                <label for="private">Private Post:</label>
-                <input type="checkbox" name="private" value="1" id="private">
+                <label class="checkbox-container">
+                    <input type="checkbox" name="private" value="1" id="private">
+                    Private Post
+                </label>
             </div>
 
-            <div style="margin-top:15px; position:relative;">
-                <label for="locationSearch">Location:</label><br>
+            <div class="location-group">
+                <label class="checkbox-container">
+                    <input type="checkbox" id="use-location" checked>
+                    Use my current location
+                </label>
+                <div id="location-status"></div>
+            </div>
+
+            <div id="search-container" class="hidden search-container-spacing">
+                <label for="locationSearch">Location:</label>
                 <input type="text" id="locationSearch"
-                    placeholder="Search for a place (e.g., University of Michigan)..."
-                    style="width:300px;" autocomplete="off">
+                        placeholder="Search for a place (e.g., University of Michigan)..."
+                        class="location-input-narrow" autocomplete="off">
                 <span id="locationCheckmark" class="location-checkmark"> ✓ Validated</span>
-
                 <div id="searchResults" class="search-results-box"></div>
-
-                <p class="disclaimer-text">Leave blank to use your current GPS location.</p>
             </div>
 
-            <button type="submit" style="margin-top:15px;" class="submit-btn">Create Post</button>
+            <button type="submit" class="submit-btn submit-btn-spacing">Create Post</button>
         </form>
     </div>
 </div>
 
+<script src="include/models/currentLocation.js"></script>
 <script src="include/models/autocomplete.js"></script>
 
 <?php require_once "include/views/_footer.php"; ?>

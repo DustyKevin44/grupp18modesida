@@ -22,7 +22,7 @@ weatherIncludes();
     </datalist>
     <div id="date-preview">Today</div>
 
-    <div id="weather-banner" style="display:none;">
+    <div id="weather-banner" class="hidden">
       <span id="wb-icon"></span>
       <span id="wb-label"></span>
       <span id="wb-temp"></span>
@@ -36,11 +36,11 @@ weatherIncludes();
       <div id="location-status"></div>
     </div>
 
-    <div id="search-container" class="hidden" style="position:relative; margin-top:12px;">
+    <div id="search-container" class="hidden search-container-spacing">
       <label for="locationSearch">Location:</label>
       <input type="text" id="locationSearch"
              placeholder="e.g. Drottninggatan, Stockholm"
-             style="width:300px;" autocomplete="off">
+             class="location-input-narrow" autocomplete="off">
       <span id="locationCheckmark" class="location-checkmark"> ✓ Validated</span>
       <div id="searchResults" class="search-results-box"></div>
     </div>

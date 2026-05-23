@@ -38,7 +38,7 @@ require_once "include/views/_header.php";
             <p><a href="logout.php">Log Out</a></p>
         </div>
 
-        <div class="post-container" <?php echo empty($posts) ? 'style="display: none;"' : ''; ?>>
+        <div class="post-container<?php echo empty($posts) ? ' hidden' : ''; ?>">
             <h2><?= $isAdmin ? 'All posts' : 'My posts' ?></h2>
 
             <div class="posts-section">
@@ -80,7 +80,7 @@ require_once "include/views/_header.php";
                             </p>
                         </div>
 
-                        <div style="margin-top:8px; display:flex; justify-content:flex-end; gap:8px;">
+                        <div class="post-action-buttons">
                             <button class="delete-btn" data-post-id="<?= htmlspecialchars($post['ID']) ?>">Delete</button>
                         </div>
 
