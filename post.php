@@ -9,6 +9,14 @@ if (!$currentUserId) {
     die("You must be logged in to post.");
 }
 
+// Check if user's account is locked
+$checkLocked = $pdo->prepare("SELECT Locked FROM User WHERE ID = ?");
+$checkLocked->execute([$currentUserId]);
+$userStatus = $checkLocked->fetch(PDO::FETCH_ASSOC);
+if ($userStatus && (int)$userStatus['Locked'] === 1) {
+    die("Your account is locked. You cannot create posts.");
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['location_data'])) {
 
     $locationData = json_decode($_POST['location_data'], true);

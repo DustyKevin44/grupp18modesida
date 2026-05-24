@@ -40,7 +40,7 @@ function weatherIncludes(): void { ?>
 
 /* ── Core forecast function ────────────────────────────────────────────── */
 /**
- * Fetches an 8-day daily forecast from Open-Meteo (free, no key needed).
+ * Fetches an 8-day daily forecast from Open-Meteo 
  *
  * @param float $lat
  * @param float $lon

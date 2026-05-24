@@ -27,6 +27,45 @@ if ($currentUserId) {
     $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+// Handle lock/unlock user action
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'toggle_lock') {
+    if (!$isAdmin) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Unauthorized']);
+        exit;
+    }
+    
+    $userId = (int)$_POST['user_id'] ?? null;
+    if ($userId) {
+        try {
+            $stmt = $pdo->prepare("SELECT Locked FROM User WHERE ID = ?");
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($user) {
+                $newLockStatus = (int)$user['Locked'] === 1 ? 0 : 1;
+                $updateStmt = $pdo->prepare("UPDATE User SET Locked = ? WHERE ID = ?");
+                $updateStmt->execute([$newLockStatus, $userId]);
+                
+                echo json_encode(['success' => true, 'locked' => $newLockStatus]);
+                exit;
+            }
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(['error' => $e->getMessage()]);
+            exit;
+        }
+    }
+}
+
+// Fetch all users for admin panel
+$allUsers = [];
+if ($isAdmin) {
+    $usersStmt = $pdo->prepare("SELECT ID, Username, Mail, Permission, Locked FROM User ORDER BY Username");
+    $usersStmt->execute();
+    $allUsers = $usersStmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 require_once "include/views/_header.php"; 
 ?>
     <div class="center">
@@ -37,6 +76,46 @@ require_once "include/views/_header.php";
             
             <p><a href="logout.php" class="btn btn-outline">Log Out</a></p>
         </div>
+
+        <?php if ($isAdmin): ?>
+        <div class="post-container">
+            <h2>Account Management</h2>
+            <div class="admin-users-section">
+                <?php if (!empty($allUsers)): ?>
+                    <table class="admin-users-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Permission</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($allUsers as $user): ?>
+                                <tr class="user-row" data-user-id="<?= $user['ID'] ?>">
+                                    <td><?= htmlspecialchars($user['Username']) ?></td>
+                                    <td><?= htmlspecialchars($user['Mail']) ?></td>
+                                    <td><?= htmlspecialchars($user['Permission']) ?></td>
+                                    <td class="status-cell">
+                                        <span class="status-badge <?= $user['Locked'] ? 'locked' : 'active' ?>">
+                                            <?= $user['Locked'] ? 'Locked' : 'Active' ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-lock-toggle" data-user-id="<?= $user['ID'] ?>" data-locked="<?= $user['Locked'] ?>">
+                                            <?= $user['Locked'] ? 'Unlock' : 'Lock' ?>
+                                        </button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endif; ?>
 
         <div class="post-container<?php echo empty($posts) ? ' hidden' : ''; ?>">
             <h2><?= $isAdmin ? 'All posts' : 'My posts' ?></h2>
@@ -93,5 +172,8 @@ require_once "include/views/_header.php";
     </div>
 
 <script src="include/models/dashboard.js"></script>
+<?php if ($isAdmin): ?>
+<script src="include/models/dashboard-admin.js"></script>
+<?php endif; ?>
 
 <?php require_once "include/views/_footer.php"; ?>
