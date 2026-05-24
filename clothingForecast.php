@@ -9,7 +9,7 @@ weatherIncludes();
 
     <h2>Clothing Forecast</h2>
     <form>
-    <p class="subtitle">Pick a day and place — we'll show you what to wear.</p>
+    <label>Pick a day and place — we'll show you what to wear.</label>
 
     <label for="date-slider">Select a date:</label>
     <input type="range" id="date-slider" min="0" max="7" value="0" step="1" list="cf-ticks">
