@@ -2,70 +2,69 @@
 require_once "include/models/db.php";
 require_once "include/models/weatherInfo.php";
 
-/**
- * =========================
- * AJAX SEARCH HANDLER
- * =========================
- */
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+$where  = ["Private = 0"];
+$params = [];
 
-  header("Content-Type: application/json");
+$query    = $_GET["query"]    ?? "";
+$weather  = $_GET["weather"]  ?? "";
+$type     = $_GET["type"]     ?? "";
+$tempMin  = $_GET["tempMin"]  ?? "";
+$tempMax  = $_GET["tempMax"]  ?? "";
+$location = $_GET["location"] ?? "";
 
-  $data = json_decode(file_get_contents("php://input"), true) ?? [];
+$searched = isset($_GET["searched"]);
 
-  $where  = ["Private = 0"];
-  $params = [];
-
-  if (!empty($data["query"])) {
+if (!empty($query)) {
     $where[]  = "Description LIKE ?";
-    $params[] = "%" . $data["query"] . "%";
-  }
+    $params[] = "%" . $query . "%";
+}
 
-  if (!empty($data["weather"])) {
+if (!empty($weather)) {
     $where[]  = "Weather = ?";
-    $params[] = $data["weather"];
-  }
+    $params[] = $weather;
+}
 
-  if (!empty($data["type"])) {
+if (!empty($type)) {
     $where[]  = "Type = ?";
-    $params[] = $data["type"];
-  }
+    $params[] = $type;
+}
 
-  if (isset($data["tempMin"]) && $data["tempMin"] !== "" && $data["tempMin"] !== null) {
+if ($tempMin !== "") {
     $where[]  = "Temperature >= ?";
-    $params[] = (int) $data["tempMin"];
-  }
+    $params[] = (int) $tempMin;
+}
 
-  if (isset($data["tempMax"]) && $data["tempMax"] !== "" && $data["tempMax"] !== null) {
+if ($tempMax !== "") {
     $where[]  = "Temperature <= ?";
-    $params[] = (int) $data["tempMax"];
-  }
+    $params[] = (int) $tempMax;
+}
 
-  if (!empty($data["location"])) {
-    $loc = json_decode($data["location"], true);
+if (!empty($location)) {
+    $loc = json_decode($location, true);
     if (is_array($loc) && !empty($loc["label"])) {
-      $where[]  = "Adress LIKE ?";
-      $params[] = "%" . $loc["label"] . "%";
+        $where[]  = "Adress LIKE ?";
+        $params[] = "%" . $loc["label"] . "%";
     }
-  }
+}
 
-  $sql = "SELECT Post.*, GROUP_CONCAT(Image.FilePath) as ImagePaths
-          FROM Post
-          LEFT JOIN Image ON Post.ID = Image.PostID
-          WHERE " . implode(" AND ", $where) . "
-          GROUP BY Post.ID
-          ORDER BY Post.ID DESC";
+$posts = [];
+$error = null;
 
-  try {
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
-    echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
-  } catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(["error" => "Database error", "message" => $e->getMessage()]);
-  }
+if ($searched) {
+    $sql = "SELECT Post.*, GROUP_CONCAT(Image.FilePath) AS ImagePaths
+            FROM Post
+            LEFT JOIN Image ON Post.ID = Image.PostID
+            WHERE " . implode(" AND ", $where) . "
+            GROUP BY Post.ID
+            ORDER BY Post.ID DESC";
 
-  exit;
+    try {
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        $error = "Database error: " . $e->getMessage();
+    }
 }
 
 require_once "include/views/_header.php";
@@ -76,57 +75,109 @@ weatherIncludes();
   <div class="post-container">
 
     <h2>Search Posts</h2>
-    <form id="searchForm">
-    <label>Keyword:</label>
-    <input type="text" id="query">
+    <form method="GET" action="search.php" id="searchForm">
+      <input type="hidden" name="searched" value="1">
 
-    <label>Weather:</label>
-    <select id="weather">
-      <option value="">Any</option>
-      <!-- Values must match wmoToLabel() / interpretWeatherCode() exactly -->
-      <option value="Clear sky">Clear sky</option>
-      <option value="Mainly clear / Partly cloudy">Mainly clear / Partly cloudy</option>
-      <option value="Overcast">Overcast</option>
-      <option value="Foggy">Foggy</option>
-      <option value="Rainy">Rainy</option>
-      <option value="Snowy">Snowy</option>
-      <option value="Thunderstorm">Thunderstorm</option>
-    </select>
+      <label>Keyword:</label>
+      <input type="text" id="query" name="query"
+             value="<?= htmlspecialchars($query) ?>">
 
-    <label>Min Temperature (°C):</label>
-    <input type="number" id="tempMin">
+      <label>Weather:</label>
+      <select id="weather" name="weather">
+        <option value="">Any</option>
+        <?php
+        $weatherOptions = [
+            "Clear sky",
+            "Mainly clear / Partly cloudy",
+            "Overcast",
+            "Foggy",
+            "Rainy",
+            "Snowy",
+            "Thunderstorm",
+        ];
+        foreach ($weatherOptions as $opt): ?>
+          <option value="<?= htmlspecialchars($opt) ?>"
+            <?= $weather === $opt ? "selected" : "" ?>>
+            <?= htmlspecialchars($opt) ?>
+          </option>
+        <?php endforeach; ?>
+      </select>
 
-    <label>Max Temperature (°C):</label>
-    <input type="number" id="tempMax">
+      <label>Min Temperature (°C):</label>
+      <input type="number" id="tempMin" name="tempMin"
+             value="<?= htmlspecialchars($tempMin) ?>">
 
-    <label>Type:</label>
-    <select id="type">
-      <option value="">Any</option>
-      <option value="outfit">Outfit</option>
-      <option value="school">School</option>
-      <option value="restaurant">Restaurant</option>
-      <option value="bar">Bar</option>
-      <option value="culture">Culture</option>
-      <option value="gym">Gym</option>
-      <option value="outdoor">Outdoor</option>
-      <option value="other">Other</option>
-    </select>
+      <label>Max Temperature (°C):</label>
+      <input type="number" id="tempMax" name="tempMax"
+             value="<?= htmlspecialchars($tempMax) ?>">
 
-    <label>Location:</label>
-    <input type="text" id="locationSearch" autocomplete="off">
-    <div id="searchResults"></div>
-    <input type="hidden" id="locationData">
-    <span id="locationCheckmark" class="location-checkmark"> ✓ Validated</span>
+      <label>Type:</label>
+      <select id="type" name="type">
+        <option value="">Any</option>
+        <?php
+        $typeOptions = [
+            "outfit", "school", "restaurant", "bar",
+            "culture", "gym", "outdoor", "other"
+        ];
+        foreach ($typeOptions as $opt): ?>
+          <option value="<?= htmlspecialchars($opt) ?>"
+            <?= $type === $opt ? "selected" : "" ?>>
+            <?= ucfirst(htmlspecialchars($opt)) ?>
+          </option>
+        <?php endforeach; ?>
+      </select>
 
-    <button type="button" id="searchBtn" class="btn btn-submit">Search</button>
+      <label>Location:</label>
+      <input type="text" id="locationSearch" autocomplete="off">
+      <div id="searchResults"></div>
+      <input type="hidden" id="locationData" name="location"
+             value="<?= htmlspecialchars($location) ?>">
+      <span id="locationCheckmark" class="location-checkmark"> ✓ Validated</span>
+
+      <button type="submit" class="btn btn-submit">Search</button>
     </form>
 
   </div>
 
-  <div id="results" class="posts-section"></div>
-</div>
+  <div id="results" class="posts-section">
+    <?php if ($error): ?>
+      <p class="message-error"><?= htmlspecialchars($error) ?></p>
 
-<script src="include/models/search.js"></script>
+    <?php elseif ($searched && empty($posts)): ?>
+      <p class="message-warning">No posts found for your filters.</p>
+
+    <?php elseif (!empty($posts)): ?>
+      <?php foreach ($posts as $post):
+        $images = [];
+        if (!empty($post["ImagePaths"])) {
+            foreach (explode(",", $post["ImagePaths"]) as $path) {
+                $images[] = '<img src="' . htmlspecialchars($path) . '" alt="Post image">';
+            }
+        }
+      ?>
+        <div class="post-card">
+          <div class="post-header">
+            <strong><?= htmlspecialchars($post["Type"] ?? "Unknown") ?></strong>
+            <span><?= htmlspecialchars($post["Adress"] ?? "Unknown") ?></span>
+          </div>
+          <div class="post-main">
+            <?php if (!empty($images)): ?>
+              <div class="post-images"><?= implode("", $images) ?></div>
+            <?php endif; ?>
+            <div class="post-meta">
+              <span>🌤 <?= htmlspecialchars($post["Weather"] ?? "-") ?></span>
+              <span>🌡 <?= htmlspecialchars($post["Temperature"] ?? "-") ?>°C</span>
+              <?php if (!empty($post["Private"])): ?>
+                <span class="private-tag">Private</span>
+              <?php endif; ?>
+            </div>
+            <p class="post-desc"><?= htmlspecialchars($post["Description"] ?? "") ?></p>
+          </div>
+        </div>
+      <?php endforeach; ?>
+    <?php endif; ?>
+  </div>
+</div>
 
 <script src="include/models/autocomplete.js"></script>
 
