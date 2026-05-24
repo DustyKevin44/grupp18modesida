@@ -1,5 +1,5 @@
 document.addEventListener("click", async function (e) {
-  if (!e.target.matches(".delete-btn")) return;
+  if (!e.target.matches(".btn-delete")) return;
   const btn = e.target;
   const postId = btn.getAttribute("data-post-id");
   if (!postId) return;

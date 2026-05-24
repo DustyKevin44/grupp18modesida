@@ -26,14 +26,14 @@ require_once("include/models/db.php");
 
         <div class="nav-links">
             <div class="main-nav">
-                <a href="index.php">Home</a>
-                <a href="search.php">Search</a>
-                <a href="clothingForecast.php">Forecast</a>
+                <a href="index.php" class="btn btn-nav">Home</a>
+                <a href="search.php" class="btn btn-nav">Search</a>
+                <a href="clothingForecast.php" class="btn btn-nav">Forecast</a>
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <a href="post.php">Create a post</a>
+                    <a href="post.php" class="btn btn-nav">Create a post</a>
                 <?php endif; ?>
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <a href="dashboard.php">Dashboard</a>
+                    <a href="dashboard.php" class="btn btn-nav">Dashboard</a>
                 <?php endif; ?>
             </div>
 
@@ -42,9 +42,9 @@ require_once("include/models/db.php");
                     <span class="username">
                         Welcome, <?= htmlspecialchars($_SESSION['username']) ?>
                     </span>
-                    <a href="logout.php">Logout</a>
+                    <a href="logout.php" class="btn btn-nav">Logout</a>
                 <?php else: ?>
-                    <a href="login.php">Login</a>
+                    <a href="login.php" class="btn btn-nav">Login</a>
                 <?php endif; ?>
             </div>
         </div>

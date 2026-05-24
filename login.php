@@ -85,7 +85,7 @@ require_once "include/views/_header.php";
                 <input type="password" id="password" name="password" required>
             </div>
 
-            <button type="submit" class="submit-btn">Sign In</button>
+            <button type="submit" class="btn btn-submit">Sign In</button>
         </form>
         
         <p class="auth-section-text">

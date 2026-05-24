@@ -35,7 +35,7 @@ require_once "include/views/_header.php";
             <h2>Hello, <?= htmlspecialchars($_SESSION['username']); ?>!</h2>
             <p>You have successfully logged in</p>
             
-            <p><a href="logout.php">Log Out</a></p>
+            <p><a href="logout.php" class="btn btn-outline">Log Out</a></p>
         </div>
 
         <div class="post-container<?php echo empty($posts) ? ' hidden' : ''; ?>">
@@ -81,7 +81,7 @@ require_once "include/views/_header.php";
                         </div>
 
                         <div class="post-action-buttons">
-                            <button class="delete-btn" data-post-id="<?= htmlspecialchars($post['ID']) ?>">Delete</button>
+                            <button class="btn btn-delete" data-post-id="<?= htmlspecialchars($post['ID']) ?>">Delete</button>
                         </div>
 
                     </div>

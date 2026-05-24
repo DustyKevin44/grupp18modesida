@@ -118,7 +118,7 @@ weatherIncludes();
     <input type="hidden" id="locationData">
     <span id="locationCheckmark" class="location-checkmark"> ✓ Validated</span>
 
-    <button type="button" id="searchBtn" class="submit-btn">Search</button>
+    <button type="button" id="searchBtn" class="btn btn-submit">Search</button>
     </form>
 
   </div>

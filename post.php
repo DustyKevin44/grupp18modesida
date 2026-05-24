@@ -141,7 +141,7 @@ weatherIncludes(); // Loads Leaflet + GeoSearch JS required by autocomplete.js
                 <div id="searchResults" class="search-results-box"></div>
             </div>
 
-            <button type="submit" class="submit-btn submit-btn-spacing">Create Post</button>
+            <button type="submit" class="btn btn-submit">Create Post</button>
         </form>
     </div>
 </div>

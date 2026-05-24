@@ -164,7 +164,7 @@ require_once "include/views/_header.php";
 
             <button 
                 type="submit"
-                class="submit-btn"
+                class="btn btn-submit"
             >
                 Register
             </button>

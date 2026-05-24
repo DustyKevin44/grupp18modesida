@@ -1,11 +1,20 @@
+:root {
+  --gradient-sunset: linear-gradient(135deg, #ff512f, #dd2476);
+  --color-dark-brown: #2d1912;
+  --color-warm-gray: #8c7670;
+  --color-soft-border: #f5eae6;
+  --color-magenta: #dd2476;
+}
+
 body {
   margin: 0;
-  padding-bottom: 80px; /* Increased slightly to prevent your expanding content from hugging the fixed footer */
+  padding-bottom: 5rem;
+  color: white;
   font-family: "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-smooth: always;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #fcf8f5; /* Warm, off-white sunset cream backdrop */
+  background-color: #fcf8f5;
 }
 
 .center {
@@ -13,164 +22,153 @@ body {
   flex-direction: column;
   gap: 5rem;
   margin-top: 2rem;
-
   justify-content: center;
   align-items: center;
-
   width: 100%;
-  /* FIX 1: Removed max-height: 80vh; */
-  min-height: 80vh; /* Changed to min-height so it can grow vertically infinitely */
-  height: auto; /* Lets content dictate height */
-
-  color: #2d1912; /* Dark warm brown text instead of harsh black */
+  min-height: 80vh;
+  height: auto;
+  color: var(--color-dark-brown);
 }
 
-/* Navbar container */
-.navbar {
-  /* Apply the linear gradient */
-  background: linear-gradient(135deg, #ff512f, #dd2476);
+.btn {
+  display: inline-block;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  border: none;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
 
-  /* Layout and spacing */
+.btn-submit {
+  padding: 1rem 2rem;
+  background-color: white;
+  color: var(--color-magenta);
+  box-shadow: 0 0.25rem 0.625rem rgba(0, 0, 0, 0.15);
+  align-self: center;
+}
+
+.btn-submit:hover {
+  background-color: #fff1ed;
+  transform: translateY(-0.0625rem);
+}
+
+.btn-delete {
+  padding: 0.5rem 0.75rem;
+  border: 0.0625rem solid var(--color-magenta);
+  background: transparent;
+  color: var(--color-magenta);
+  font-weight: 600;
+}
+
+.btn-delete:hover {
+  background: #ffefef;
+}
+
+.btn-nav {
+  color: white;
+  padding: 0.625rem 0.9375rem;
+  margin-left: 0.625rem;
+  font-weight: normal;
+  border-radius: 0.3125rem;
+}
+
+.btn-nav:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-outline {
+  padding: 0.75rem 2rem;
+  border: 0.125rem solid #ffffff;
+  background-color: transparent;
+  color: #ffffff !important;
+}
+
+.btn-outline:hover {
+  background-color: #ffffff;
+  color: var(--color-magenta) !important;
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.15);
+}
+
+.navbar {
+  background: var(--gradient-sunset);
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-
-  /* Ensure text is readable against the bright background */
   color: #ffffff;
-  box-shadow: 0 4px 15px rgba(221, 36, 118, 0.2); /* Tinted drop shadow */
+  box-shadow: 0 0.25rem 0.9375rem rgba(221, 36, 118, 0.2);
 }
 
-/* Website title */
 .navbar-title {
   color: white;
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: bold;
-  margin-right: 40px;
+  margin-right: 2.5rem;
 }
 
-/* Navigation Container - takes up all remaining space */
 .nav-links {
   display: flex;
   align-items: center;
   flex: 1;
 }
 
-/* Main links stay on the left */
-.main-nav {
+.main-nav,
+.auth-nav {
   display: flex;
   align-items: center;
 }
 
-/* Magic happens here: pushes the auth container completely to the right */
 .auth-nav {
   margin-left: auto;
-  display: flex;
-  align-items: center;
 }
 
-/* Navigation buttons & text styling */
-.nav-links a,
-.nav-links .username {
-  color: white;
-  text-decoration: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-}
-
-.nav-links a {
-  margin-left: 10px; /* Spacing between buttons */
-  transition: background-color 0.3s;
-}
-
-.nav-links a:hover {
-  background-color: rgba(
-    255,
-    255,
-    255,
-    0.2
-  ); /* Transparent white overlay instead of harsh dark gray */
-}
-
-/* Distinct styling for username display if needed */
-.nav-links .username {
-  font-size: 0.95em;
-  opacity: 0.9;
-}
-
-/* Footer */
 footer {
   position: fixed;
   left: 0;
   bottom: 0;
-
   width: 100%;
-  height: 60px;
-
-  /* Matches the navbar gradient for a unified bottom frame */
-  background: linear-gradient(135deg, #ff512f, #dd2476);
+  height: 3.75rem;
+  background: var(--gradient-sunset);
   color: white;
-
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 -4px 15px rgba(221, 36, 118, 0.15);
+  box-shadow: 0 -0.25rem 0.9375rem rgba(221, 36, 118, 0.15);
 }
 
-footer p {
-  margin: 0;
-  font-size: 14px;
-}
-
-textarea {
-  resize: none;
-}
-
-.post-container {
+.dashboard {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-
-  justify-content: center;
   align-items: center;
-
-  width: 50vw;
-  min-width: 50vw;
+  justify-content: center;
+  width: 40vw;
+  min-width: 20rem;
   max-width: 90vw;
-  padding: 2rem;
+  padding: 3rem 2rem;
   border-radius: 1rem;
-
-  /* Converted card background to the rich sunset gradient */
-  background: linear-gradient(135deg, #ff512f, #dd2476);
+  background: var(--gradient-sunset);
   color: white;
   box-sizing: border-box;
-  box-shadow: 0 10px 25px rgba(221, 36, 118, 0.25);
-
-  /* FIX 2: Explicitly added height tracking rule */
-  height: auto; /* Ensures the container expands dynamically around the form */
-}
-
-.post-container h2 {
-  align-self: center;
   text-align: center;
-  width: 100%;
-
-  /* FIX 3: Removed min-height: 80vh; */
-  height: auto; /* Prevents the header from eating up almost all container space */
-  margin: 0 0 1rem 0; /* Gives a healthy space below the title instead */
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0.625rem 1.5625rem rgba(221, 36, 118, 0.25);
 }
 
-.post-container:empty,
-.posts-section:empty {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: none !important;
-  box-shadow: none !important;
-  overflow: hidden !important;
+.dashboard h1 {
+  font-size: 2.2rem;
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.0625rem;
+  text-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.15);
+}
+
+.dashboard h2 {
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: #ffe0da;
+  margin: 0 0 1.5rem 0;
 }
 
 form {
@@ -179,12 +177,9 @@ form {
   gap: 1rem;
   width: 100%;
   box-sizing: border-box;
-
-  /* Centers all internal form elements (labels, slider, button) horizontally */
   align-items: left;
 }
 
-/* Centers the text inside labels and the date preview */
 form label,
 #date-preview,
 .post-container h2 {
@@ -192,59 +187,17 @@ form label,
   width: 100%;
 }
 
-#date-slider {
-  /* Using 100% now so it centers evenly across the available space */
-  width: 100%;
-  margin: 0;
-  padding: 0;
-
-  cursor: pointer;
-  accent-color: #fff;
-  box-sizing: border-box;
-
-  -webkit-appearance: none;
-  appearance: none;
-  background: transparent;
+form label {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: white;
+  font-weight: 500;
 }
 
-/* Custom track and thumb styling to keep edge-to-edge alignment centered */
-#date-slider::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.3); /* Softer slider track over gradient */
-  border-radius: 2px;
+textarea {
+  resize: none;
 }
 
-#date-slider::-moz-range-track {
-  width: 100%;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 2px;
-}
-
-#date-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  margin-top: -6px;
-  height: 16px;
-  width: 16px;
-  border-radius: 50%;
-  background: #ffffff;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-#date-slider::-moz-range-thumb {
-  height: 16px;
-  width: 16px;
-  border: none;
-  border-radius: 50%;
-  background: #ffffff;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-/* Target all text-based inputs, textareas, and select menus inside the form */
 form input[type="text"],
 form input[type="email"],
 form input[type="password"],
@@ -257,14 +210,9 @@ form select {
   width: 100%;
   padding: 0.75rem;
   border-radius: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background-color: rgba(
-    255,
-    255,
-    255,
-    0.95
-  ); /* Bright clean backdrop for input text */
-  color: #2d1912;
+  border: 0.0625rem solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.95);
+  color: var(--color-dark-brown);
   font-size: 1rem;
   font-family: Arial, sans-serif;
   cursor: pointer;
@@ -275,98 +223,271 @@ form select {
     background-color 0.2s;
 }
 
-/* Add a subtle border highlight on focus for all elements */
-form input:focus,
-form textarea:focus,
-form select:focus {
-  border-color: #fff;
-  background-color: #ffffff;
+form input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+  margin-right: 0.5rem;
 }
 
-/* Ensure dropdown choices match */
-form select option {
-  background-color: white;
-  color: #2d1912;
+.post-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  width: 50vw;
+  min-width: 50vw;
+  max-width: 90vw;
+  padding: 2rem;
+  border-radius: 1rem;
+  background: var(--gradient-sunset);
+  color: white;
+  box-sizing: border-box;
+  box-shadow: 0 0.625rem 1.5625rem rgba(221, 36, 118, 0.25);
+  height: auto;
 }
 
-/* Quick adjustment for textareas to allow vertical resizing only */
-form textarea {
-  resize: vertical;
-  min-height: 100px;
+.post-container h2 {
+  align-self: center;
+  height: auto;
+  margin: 0 0 1rem 0;
+  text-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.15);
 }
 
-/* Add a subtle border highlight when the user clicks the dropdown */
-#category-select:focus {
-  border-color: #fff;
+.posts-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 73.75rem;
+  gap: 1.5rem;
+  margin: 1rem auto;
+  padding: 0 1rem;
 }
 
-/* Ensure the dropdown choices are readable across different browsers */
-#category-select option {
-  background-color: white;
-  color: #2d1912;
+.post-card,
+.post {
+  background: linear-gradient(135deg, #fff7f3 0%, #fffcf9 100%);
+  border: 0.125rem solid var(--color-soft-border);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  width: 100%;
+  max-width: 20rem;
+  height: 30rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    0 0.5rem 1.5rem rgba(221, 36, 118, 0.12),
+    0 0.125rem 0.5rem rgba(255, 81, 47, 0.08);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.post-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.post-header,
+.post > h3 {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 0.125rem solid transparent;
+  border-image: linear-gradient(90deg, #ff512f 0%, #dd2476 100%) 1;
+}
+
+.post-header strong {
+  color: #ff512f;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  text-shadow: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.05);
+}
+
+.post-header span {
+  color: var(--color-warm-gray);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.01875rem;
+}
+
+.post-desc,
+.post > p:first-of-type {
+  margin-bottom: 0.75rem;
+  color: var(--color-dark-brown);
+  padding-right: 0;
+  word-wrap: break-word;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.post-meta,
+.post > p {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--color-warm-gray);
+  margin-bottom: 0.625rem;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 0.5rem 0;
+}
+
+.private-tag {
+  background: linear-gradient(135deg, #ffd4cc, #ffeae6);
+  color: var(--color-magenta);
+  padding: 0.25rem 0.625rem;
+  border-radius: 1.25rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 0.125rem 0.25rem rgba(221, 36, 118, 0.1);
+}
+
+.post-images,
+.post > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.625rem;
+  margin-top: 0.75rem;
+  overflow-y: auto;
+  max-height: 15.625rem;
+  padding-right: 0;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.post-images::-webkit-scrollbar,
+.post > div::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.post-images img,
+.post img {
+  width: 90%;
+  max-width: 17.5rem;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  border-radius: 0.625rem;
+  border: 0.125rem solid var(--color-soft-border);
+  box-shadow: 0 0.1875rem 0.5rem rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  max-height: none;
+}
+
+#date-slider {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  accent-color: #fff;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+
+#date-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 0.25rem;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 0.125rem;
+}
+
+#date-slider::-moz-range-track {
+  width: 100%;
+  height: 0.25rem;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 0.125rem;
+}
+
+#date-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -0.375rem;
+  height: 1rem;
+  width: 1rem;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
+}
+
+#date-slider::-moz-range-thumb {
+  height: 1rem;
+  width: 1rem;
+  border: none;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
 }
 
 #search-container {
-  /* Set up a vertical stack that centers elements */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-
   width: 100%;
-  margin-top: 15px;
+  margin-top: 0.9375rem;
   position: relative;
 }
 
-/* Center align the text elements inside the container */
 #search-container label,
 #search-container p {
   text-align: center;
   width: 100%;
 }
 
-/* The dropdown container box */
 .search-results-box {
   position: absolute;
-  top: 100%; /* Positions it directly beneath the input field */
+  top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  width: 300px; /* Matches your input field width */
-  background-color: #ffffff; /* Swapped from black to match new form style */
-  border: 1px solid rgba(221, 36, 118, 0.3);
+  width: 18.75rem;
+  background-color: #ffffff;
+  border: 0.0625rem solid rgba(221, 36, 118, 0.3);
   border-top: none;
   border-radius: 0 0 0.5rem 0.5rem;
-  z-index: 1000; /* Ensures it floats above footer or other text elements */
-  max-height: 200px;
-  overflow-y: auto; /* Allows scrolling if there are many results */
+  z-index: 1000;
+  max-height: 12.5rem;
+  overflow-y: auto;
   box-sizing: border-box;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.25rem 0.625rem rgba(0, 0, 0, 0.1);
 }
 
-/* Individual autocompleted search results */
 .search-item {
-  padding: 10px 15px;
+  padding: 0.625rem 0.9375rem;
   background-color: #ffffff;
-  color: #2d1912;
+  color: var(--color-dark-brown);
   cursor: pointer;
   font-family: Arial, sans-serif;
   font-size: 0.9rem;
-  text-align: left; /* Keeps the suggestions left-aligned */
-  border-bottom: 1px solid #f5eae6; /* Soft warm divider between results */
+  text-align: left;
+  border-bottom: 0.0625rem solid var(--color-soft-border);
   transition: background-color 0.2s;
 }
 
-/* Optional: Changes the item's appearance when hovered or highlighted */
 .search-item:hover {
-  background-color: #fff1ed; /* Soft warm glow on hover */
+  background-color: #fff1ed;
   color: #ff512f;
 }
 
-.hidden {
-  display: none !important;
-}
-
-/* Layout wrapper for the location element */
 .location-group {
   width: 100%;
   display: flex;
@@ -375,7 +496,6 @@ form textarea {
   margin: 0.5rem 0;
 }
 
-/* Style for the label text wrapping the input */
 .checkbox-container {
   display: flex;
   align-items: center;
@@ -386,341 +506,19 @@ form textarea {
   user-select: none;
 }
 
-/* Style the actual checkbox box */
 .checkbox-container input[type="checkbox"] {
   width: 1.25rem;
   height: 1.25rem;
   cursor: pointer;
-  accent-color: #ff512f; /* Accented sunset checkmark box */
+  accent-color: #ff512f;
 }
 
-/* Status message style below the checkbox */
 #location-status {
   font-size: 0.85rem;
-  color: #ffe0da; /* Highly legible soft sunset pink/orange text */
-  min-height: 1.2rem; /* Keeps layout stable when text shifts */
+  color: #ffe0da;
+  min-height: 1.2rem;
 }
 
-.disclaimer-text {
-  font-size: 0.85em;
-  color: rgba(255, 255, 255, 0.7); /* Readable overlay color */
-}
-
-.submit-btn {
-  padding: 1rem 2rem;
-  border-radius: 0.5rem;
-  border: none;
-  background-color: white;
-  color: #dd2476; /* Vibrant magenta/orange tone text */
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  transition:
-    transform 0.2s,
-    background-color 0.2s;
-
-  /* Keeps the button centered instead of stretching full width */
-  align-self: center;
-}
-
-.submit-btn:hover {
-  background-color: #fff1ed;
-  transform: translateY(-1px);
-}
-
-/* Delete button styling used on dashboard post cards */
-.delete-btn {
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid #dd2476;
-  background: transparent;
-  color: #dd2476;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.delete-btn:hover {
-  background: #ffefef;
-}
-
-.posts-section {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-start;
-  width: 100%;
-  max-width: 1180px;
-  gap: 1.5rem;
-  margin: 1rem auto;
-  padding: 0 1rem;
-}
-
-/* Standardized Post Card with Fixed Dimensions */
-.post-card,
-.post {
-  background: linear-gradient(135deg, #fff7f3 0%, #fffcf9 100%);
-  border: 2px solid #f5eae6; /* Soft warm border */
-  border-radius: 16px;
-  padding: 20px;
-  width: 320px;
-  min-width: 320px;
-  max-width: 320px;
-  height: 480px;
-  display: flex;
-  flex-direction: column;
-  box-shadow:
-    0 8px 24px rgba(221, 36, 118, 0.12),
-    0 2px 8px rgba(255, 81, 47, 0.08);
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-.post-main {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  padding-right: 4px;
-}
-
-.post-header,
-.post > h3 {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid transparent;
-  border-image: linear-gradient(90deg, #ff512f 0%, #dd2476 100%) 1;
-}
-
-.post-header strong {
-  color: #ff512f;
-  font-size: 1.05rem;
-  font-weight: 700;
-  margin-bottom: 4px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.post-header span {
-  color: #8c7670;
-  font-size: 0.85rem;
-  font-weight: 500;
-  letter-spacing: 0.3px;
-}
-
-.post > h3 {
-  border-bottom: none;
-  padding-bottom: 0;
-  margin-bottom: 8px;
-  font-size: 1.1rem;
-}
-
-/* Description styling */
-.post-desc,
-.post > p:first-of-type {
-  margin-bottom: 12px;
-  color: #2d1912;
-  padding-right: 0;
-  word-wrap: break-word;
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
-
-.post-meta,
-.post > p {
-  display: flex;
-  gap: 12px;
-  font-size: 0.9rem;
-  color: #8c7670;
-  margin-bottom: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-  padding: 8px 0;
-}
-
-.post > p:last-of-type {
-  margin-bottom: 10px;
-}
-
-.private-tag {
-  background: linear-gradient(135deg, #ffd4cc, #ffeae6);
-  color: #dd2476; /* Vibrant magenta warning tag */
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  white-space: nowrap;
-  box-shadow: 0 2px 4px rgba(221, 36, 118, 0.1);
-}
-
-/* Post Images Container */
-.post-images,
-.post > div {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-top: 12px;
-  overflow-y: auto;
-  max-height: 250px;
-  padding-right: 0;
-}
-
-.post-images::-webkit-scrollbar,
-.post > div::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-}
-
-.post-images,
-.post > div {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.post-images img,
-.post img {
-  width: 90%;
-  max-width: 280px;
-  height: auto;
-  object-fit: contain;
-  display: block;
-  border-radius: 10px;
-  border: 2px solid #f5eae6;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
-  max-height: none;
-}
-
-/* HR separator styling */
-.post > hr {
-  border: none;
-  border-top: 1px solid #f5eae6;
-  margin: 10px 0;
-}
-
-.dashboard {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Centers text horizontally */
-  justify-content: center;
-
-  width: 40vw; /* Slightly narrower than the post form */
-  min-width: 320px; /* Keeps it readable on mobile */
-  max-width: 90vw;
-
-  padding: 3rem 2rem;
-  border-radius: 1rem;
-  background: linear-gradient(
-    135deg,
-    #ff512f,
-    #dd2476
-  ); /* Full dashboard theme block */
-  color: white;
-  box-sizing: border-box;
-  text-align: center;
-  box-shadow: 0 10px 25px rgba(221, 36, 118, 0.25);
-}
-
-/* Typography styling */
-.dashboard h1 {
-  font-size: 2.2rem;
-  margin: 0 0 0.5rem 0;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-}
-
-.dashboard h2 {
-  font-size: 1.4rem;
-  font-weight: 400;
-  color: #ffe0da; /* Soft sunset white glow */
-  margin: 0 0 1.5rem 0;
-}
-
-.dashboard p {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.8);
-  margin: 0 0 2rem 0;
-}
-
-/* Styled Logout Button instead of just text */
-.dashboard a {
-  display: inline-block;
-  padding: 0.75rem 2rem;
-  border: 2px solid #ffffff; /* Clean white border over the gradient background */
-  border-radius: 0.5rem;
-  background-color: transparent;
-  color: #ffffff !important;
-  text-decoration: none;
-  font-weight: bold;
-  transition: all 0.2s ease;
-}
-
-.dashboard a:hover {
-  background-color: #ffffff;
-  color: #dd2476 !important; /* Text flips to theme color on white hover inversion */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* ── Success & Error Messages ────────────────────────────────────────── */
-.message-success {
-  color: green;
-  padding: 10px;
-  border: 1px solid green;
-  background: #e6ffe6;
-  border-radius: 0.25rem;
-  margin-bottom: 1rem;
-}
-
-.message-error {
-  color: red;
-  padding: 10px;
-  border: 1px solid red;
-  background: #ffe6e6;
-  border-radius: 0.25rem;
-  margin-bottom: 1rem;
-}
-
-.message-info {
-  color: #0066cc;
-  padding: 10px;
-  border: 1px solid #0066cc;
-  background: #e6f2ff;
-  border-radius: 0.25rem;
-  margin-bottom: 1rem;
-}
-
-.message-warning {
-  color: orange;
-  padding: 10px;
-  border: 1px solid orange;
-  background: #fff4e6;
-  border-radius: 0.25rem;
-  margin-bottom: 1rem;
-}
-
-/* ── Form Labels & Styling ────────────────────────────────────────── */
-form label {
-  display: block;
-  margin-bottom: 0.25rem;
-  color: white;
-  font-weight: 500;
-}
-
-form input[type="checkbox"] {
-  width: 1.25rem;
-  height: 1.25rem;
-  cursor: pointer;
-  margin-right: 0.5rem;
-}
-
-/* ── Location Validation Status ────────────────────────────────────── */
 .location-checkmark {
   color: green;
   display: none;
@@ -731,21 +529,15 @@ form input[type="checkbox"] {
   display: inline;
 }
 
-#location-status {
-  font-size: 0.85rem;
-  color: #ffe0da;
-  min-height: 1.2rem;
+.location-field-group {
+  margin-top: 0.9375rem;
+  position: relative;
 }
 
-/* ── Subtitle Text ────────────────────────────────────────────────── */
-.subtitle {
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 1rem;
-  text-align: center;
+.location-input-narrow {
+  width: 18.75rem !important;
 }
 
-/* ── Weather Banner Styling ────────────────────────────────────────– */
 #weather-banner {
   display: none;
   gap: 1rem;
@@ -765,11 +557,49 @@ form input[type="checkbox"] {
   gap: 0.5rem;
 }
 
-#weather-banner span:first-child {
-  font-size: 1.5rem;
+[class^="message-"] {
+  padding: 0.625rem;
+  border-radius: 0.25rem;
+  margin-bottom: 1rem;
+  border: 0.0625rem solid currentColor;
 }
 
-/* ── Results Container ────────────────────────────────────────────── */
+.message-success {
+  color: green;
+  background: #e6ffe6;
+}
+
+.message-error {
+  color: red;
+  background: #ffe6e6;
+}
+
+.message-info {
+  color: #0066cc;
+  background: #e6f2ff;
+}
+
+.message-warning {
+  color: orange;
+  background: #fff4e6;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.post-container:empty,
+.posts-section:empty {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}
+
 #results,
 #cf-results {
   width: 100%;
@@ -780,7 +610,13 @@ form input[type="checkbox"] {
   text-align: center;
 }
 
-/* ── Auth Form Styling ────────────────────────────────────────────── */
+.post-action-buttons {
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
 .auth-section-text {
   text-align: center;
   color: white;
@@ -798,31 +634,7 @@ form input[type="checkbox"] {
   text-decoration: underline;
 }
 
-/* ── Location Input Styling ────────────────────────────────────────── */
-.location-field-group {
-  margin-top: 15px;
-  position: relative;
-}
-
-.location-input-narrow {
-  width: 300px !important;
-}
-
-/* ── Post Action Buttons ───────────────────────────────────────────── */
-.post-action-buttons {
-  margin-top: 8px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
-/* ── Submit Button Spacing ─────────────────────────────────────────── */
-.submit-btn-spacing {
-  margin-top: 15px;
-}
-
-/* ── Search Container Spacing ──────────────────────────────────────── */
 .search-container-spacing {
   position: relative;
-  margin-top: 12px;
+  margin-top: 0.75rem;
 }
