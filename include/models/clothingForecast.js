@@ -130,6 +130,7 @@
         <div class="post-header">
           <strong>${post.Type ?? "Unknown"}</strong>
           <span>${post.Adress ?? "Unknown"}</span>
+          <span>${post.Username ?? "Unknown"}</span>
         </div>
         <div class="post-main">
           <div class="post-images">${imgs}</div>
