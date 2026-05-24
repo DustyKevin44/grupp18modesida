@@ -12,7 +12,7 @@ function triggerGeolocation() {
       "Geolocation is not supported by your browser.";
     locationStatus.style.color = "#ff4d4d";
     locationCheckbox.checked = false;
-    searchContainer.classList.remove("hidden"); // Show search bar as fallback
+    searchContainer.classList.remove("hidden");
     return;
   }
 
@@ -30,7 +30,7 @@ function triggerGeolocation() {
       userLatitude = null;
       userLongitude = null;
       locationCheckbox.checked = false;
-      searchContainer.classList.remove("hidden"); // Show search bar as fallback
+      searchContainer.classList.remove("hidden");
 
       if (error.code === error.PERMISSION_DENIED) {
         locationStatus.textContent =
@@ -43,21 +43,19 @@ function triggerGeolocation() {
   );
 }
 
-// Watch for the checkbox toggles
 locationCheckbox.addEventListener("change", function () {
   if (this.checked) {
-    searchContainer.classList.add("hidden"); // Hide search bar smoothly
-    locationSearchInput.value = ""; // Clear typed values
+    searchContainer.classList.add("hidden");
+    locationSearchInput.value = "";
     triggerGeolocation();
   } else {
-    searchContainer.classList.remove("hidden"); // Reveal left-aligned search bar
+    searchContainer.classList.remove("hidden");
     userLatitude = null;
     userLongitude = null;
     locationStatus.textContent = "";
   }
 });
 
-// Run once on load to sync initial state
 if (locationCheckbox.checked) {
   searchContainer.classList.add("hidden");
   triggerGeolocation();

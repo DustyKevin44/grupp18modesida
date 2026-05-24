@@ -12,10 +12,8 @@ require_once("include/models/db.php");
     <meta name="author" content="Your name">
     <title>Modesidan</title>
 
-    <!-- Favicon -->
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 
-    <!-- CSS -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
