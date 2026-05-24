@@ -1,6 +1,69 @@
 <?php
-require_once "include/views/_header.php";
+require_once "include/models/db.php";
 require_once "include/models/weatherInfo.php";
+
+// ================================
+// AJAX POST handler
+// ================================
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    header("Content-Type: application/json");
+
+    $data = json_decode(file_get_contents("php://input"), true) ?? [];
+
+    $where  = ["Private = 0"];
+    $params = [];
+
+    if (!empty($data["weather"])) {
+        $where[]  = "Weather = ?";
+        $params[] = $data["weather"];
+    }
+
+    if (isset($data["tempMin"]) && $data["tempMin"] !== "") {
+        $where[]  = "Temperature >= ?";
+        $params[] = (int) $data["tempMin"];
+    }
+
+    if (isset($data["tempMax"]) && $data["tempMax"] !== "") {
+        $where[]  = "Temperature <= ?";
+        $params[] = (int) $data["tempMax"];
+    }
+
+    if (!empty($data["type"])) {
+        $where[]  = "Type = ?";
+        $params[] = $data["type"];
+    }
+
+    if (!empty($data["location"])) {
+        $loc = json_decode($data["location"], true);
+        if (is_array($loc) && !empty($loc["label"])) {
+            $where[]  = "Adress LIKE ?";
+            $params[] = "%" . $loc["label"] . "%";
+        }
+    }
+
+    $sql = "SELECT Post.*, GROUP_CONCAT(Image.FilePath) AS ImagePaths
+            FROM Post
+            LEFT JOIN Image ON Post.ID = Image.PostID
+            WHERE " . implode(" AND ", $where) . "
+            GROUP BY Post.ID
+            ORDER BY Post.ID DESC";
+
+    try {
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
+        echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(["error" => "Database error", "message" => $e->getMessage()]);
+    }
+
+    exit;
+}
+
+// ================================
+// GET — page render
+// ================================
+require_once "include/views/_header.php";
 weatherIncludes();
 ?>
 
@@ -58,40 +121,18 @@ weatherIncludes();
       <option value="other">Other</option>
     </select>
 
-    <!--
-      locationData hidden input is required by autocomplete.js —
-      it writes the selected location JSON here.
-    -->
     <input type="hidden" id="locationData">
-
-    <!--
-      postForm dummy form is required by autocomplete.js —
-      it calls form.addEventListener("submit", ...) and form.submit().
-      We intercept submit below so nothing actually navigates.
-    -->
     <form id="postForm" onsubmit="return false;"></form>
 
     <button id="find-btn" class="btn btn-submit">Find outfits</button>
+    </form>
   </div>
 
   <div id="cf-results" class="posts-section"></div>
 </div>
 
-<!--
-  Load currentLocation.js first — it reads #use-location, #location-status,
-  #search-container, #locationSearch and stores coords in userLatitude /
-  userLongitude on the script's own scope. We reach those via the getGPSCoords()
-  bridge defined below BEFORE the script loads.
--->
 <script src="include/models/clothingForecastBridge.js"></script>
-
 <script src="include/models/currentLocation.js"></script>
-
-<!--
-  autocomplete.js writes the chosen location as JSON into #locationData.
-  It also binds to #postForm submit — our dummy form + onsubmit=false
-  prevents any navigation.
--->
 <script src="include/models/autocomplete.js"></script>
 
 <script src="include/models/clothingForecast.js"></script>
