@@ -1,7 +1,7 @@
 <?php
 session_start();
-$_SESSION = array(); // Clear session data
-session_destroy();   // Destroy the session completely
+$_SESSION = array(); 
+session_destroy();   
 
 header("Location: login.php");
 exit();

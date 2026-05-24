@@ -11,7 +11,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = filter_var(trim($_POST['email'] ?? ''), FILTER_SANITIZE_EMAIL);
     $password = $_POST['password'] ?? '';
 
-    // Validation
     if (empty($username) || empty($email) || empty($password)) {
         $_SESSION['reg_error'] = "All fields are required.";
         header("Location: register.php");
@@ -50,7 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         }
 
-        // Check if username already exists
         $checkUsername = $pdo->prepare("
             SELECT ID
             FROM User
@@ -68,10 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         }
 
-        // Hash password securely
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        // Insert new user
         $insertStmt = $pdo->prepare("
             INSERT INTO User (
                 Username,
@@ -103,7 +99,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 }
 
-// Load page header
 require_once "include/views/_header.php";
 ?>
 
@@ -119,7 +114,6 @@ require_once "include/views/_header.php";
             </div>
         <?php endif; ?>
 
-        <!-- Success Message -->
         <?php if (isset($_SESSION['reg_success'])): ?>
             <div class="message-success">
                 <?= htmlspecialchars($_SESSION['reg_success']); ?>

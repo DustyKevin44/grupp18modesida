@@ -30,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['location_data'])) {
         $isPrivate   = isset($_POST['private']) ? 1 : 0;
         $description = $_POST['description'] ?? '';
 
-        // Default fallbacks
         $temperature      = 0;
         $weatherCondition = "Unknown";
 
@@ -60,7 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['location_data'])) {
 
             $postId = $pdo->lastInsertId();
 
-            /* ── Image upload ── */
             if (!empty($_FILES['images']['name'][0])) {
 
                 $uploadDir = "uploads/";

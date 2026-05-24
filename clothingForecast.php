@@ -2,9 +2,6 @@
 require_once "include/models/db.php";
 require_once "include/models/weatherInfo.php";
 
-// ================================
-// AJAX POST handler
-// ================================
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     header("Content-Type: application/json");
 
@@ -60,9 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     exit;
 }
 
-// ================================
-// GET — page render
-// ================================
+
 require_once "include/views/_header.php";
 weatherIncludes();
 ?>
