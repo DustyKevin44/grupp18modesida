@@ -114,7 +114,7 @@ weatherIncludes(); // Loads Leaflet + GeoSearch JS required by autocomplete.js
         <form id="postForm" action="post.php" method="POST" enctype="multipart/form-data">
 
             <div>
-                <label for="images">Images:</label><br>
+                <label for="image">Images:</label><br>
                 <input type="file" name="images[]" id="images" multiple accept="image/*">
             </div>
 
@@ -132,15 +132,7 @@ weatherIncludes(); // Loads Leaflet + GeoSearch JS required by autocomplete.js
                 </label>
             </div>
 
-            <div class="location-group">
-                <label class="checkbox-container">
-                    <input type="checkbox" id="use-location" checked>
-                    Use my current location
-                </label>
-                <div id="location-status"></div>
-            </div>
-
-            <div id="search-container" class="hidden search-container-spacing">
+            <div id="search-container" class="search-container-spacing">
                 <label for="locationSearch">Location:</label>
                 <input type="text" id="locationSearch"
                         placeholder="Search for a place (e.g., University of Michigan)..."
