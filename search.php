@@ -51,8 +51,9 @@ $posts = [];
 $error = null;
 
 if ($searched) {
-    $sql = "SELECT Post.*, GROUP_CONCAT(Image.FilePath) AS ImagePaths
+    $sql = "SELECT User.Username, Post.*, GROUP_CONCAT(Image.FilePath) AS ImagePaths
             FROM Post
+            LEFT JOIN User ON User.ID = Post.UserID
             LEFT JOIN Image ON Post.ID = Image.PostID
             WHERE " . implode(" AND ", $where) . "
             GROUP BY Post.ID
@@ -159,6 +160,7 @@ weatherIncludes();
           <div class="post-header">
             <strong><?= htmlspecialchars($post["Type"] ?? "Unknown") ?></strong>
             <span><?= htmlspecialchars($post["Adress"] ?? "Unknown") ?></span>
+            <span><?= htmlspecialchars($post["Username"] ?? "Unknown") ?></span>
           </div>
           <div class="post-main">
             <?php if (!empty($images)): ?>

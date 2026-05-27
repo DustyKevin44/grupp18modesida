@@ -129,7 +129,6 @@ require_once "include/views/_header.php";
                         <div class="post-header">
                             <strong><?= htmlspecialchars($post['Type']) ?></strong>
                             <span><?= htmlspecialchars($post['Adress']) ?></span>
-                            <span><?= htmlspecialchars($post['Adress']) ?></span>
                         </div>
 
                         <div class="post-main">

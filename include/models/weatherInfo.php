@@ -1,18 +1,4 @@
 <?php
-/**
- * weatherInfo.php
- *
- * 1. Provides Leaflet / geocoding CSS+JS includes (echo via weatherIncludes()).
- * 2. Exposes fetchForecast($lat, $lon, $days) for use by other PHP files.
- * 3. Handles POST requests from JS: { lat, lon, days } → JSON forecast array.
- *
- * Each forecast item:
- *   { date, weather, temperature, tempMin, tempMax }
- *
- * "weather" values match the labels used in search.php exactly.
- */
-
-/* ── AJAX endpoint ─────────────────────────────────────────────────────── */
 if (realpath(__FILE__) === realpath($_SERVER['SCRIPT_FILENAME']) && $_SERVER["REQUEST_METHOD"] === "POST") {
     header("Content-Type: application/json");
 
@@ -31,22 +17,11 @@ if (realpath(__FILE__) === realpath($_SERVER['SCRIPT_FILENAME']) && $_SERVER["RE
     exit;
 }
 
-/* ── HTML includes (call once in <head> or before </body>) ─────────────── */
 function weatherIncludes(): void { ?>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.11.0/dist/geosearch.css" />
     <script src="https://unpkg.com/leaflet-geosearch@3.11.0/dist/bundle.min.js"></script>
 <?php }
-
-/* ── Core forecast function ────────────────────────────────────────────── */
-/**
- * Fetches an 8-day daily forecast from Open-Meteo 
- *
- * @param float $lat
- * @param float $lon
- * @param int   $days  Number of days to return (max 7, i.e. today + 7).
- * @return array       Array of forecast objects, index 0 = today.
- */
 function fetchForecast(float $lat, float $lon, int $days = 7): array {
     $url = "https://api.open-meteo.com/v1/forecast?" . http_build_query([
         "latitude"      => $lat,
@@ -82,7 +57,6 @@ function fetchForecast(float $lat, float $lon, int $days = 7): array {
     return $results;
 }
 
-/* ── WMO weather-code → search.php label ──────────────────────────────── */
 function wmoToLabel(int $code): string {
     return match(true) {
         $code === 0              => "Clear sky",

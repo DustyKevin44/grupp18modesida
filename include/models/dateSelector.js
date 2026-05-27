@@ -19,11 +19,9 @@ function updateDateDisplay() {
     return;
   }
 
-  // Calculate future date based on slider value
   const targetDate = new Date();
   targetDate.setDate(targetDate.getDate() + value);
 
-  // Format day name and date (e.g., "Thursday, May 21")
   const dayName = daysOfWeek[targetDate.getDay()];
   const month = targetDate.toLocaleString("default", { month: "short" });
   const dateNum = targetDate.getDate();
@@ -35,8 +33,6 @@ function updateDateDisplay() {
   }
 }
 
-// Listen for user dragging the slider
 slider.addEventListener("input", updateDateDisplay);
 
-// Run once on load to establish initial "Today" state
 updateDateDisplay();

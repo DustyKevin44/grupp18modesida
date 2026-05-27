@@ -38,9 +38,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 
-    $sql = "SELECT Post.*, GROUP_CONCAT(Image.FilePath) AS ImagePaths
+    $sql = "SELECT User.Username, Post.*, GROUP_CONCAT(Image.FilePath) AS ImagePaths
             FROM Post
             LEFT JOIN Image ON Post.ID = Image.PostID
+            LEFT JOIN User ON User.ID = Post.UserID
             WHERE " . implode(" AND ", $where) . "
             GROUP BY Post.ID
             ORDER BY Post.ID DESC";

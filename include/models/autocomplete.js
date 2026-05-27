@@ -1,5 +1,3 @@
-// 1. Initialize the Search Provider with Nominatim-compliant headers
-
 const provider = new window.GeoSearch.OpenStreetMapProvider({
   params: {
     "Accept-Language": "sv",
@@ -22,7 +20,6 @@ function debounce(func, delay) {
   };
 }
 
-// 2. Autocomplete API trigger wrapped in a 1-second debounce handler
 searchInput.addEventListener(
   "input",
   debounce(async (e) => {
@@ -42,7 +39,6 @@ searchInput.addEventListener(
   }, 1000),
 );
 
-// Render the results into the dropdown box
 function renderResults(results) {
   resultsBox.innerHTML = "";
 
@@ -65,7 +61,7 @@ function renderResults(results) {
 
       const structuredData = {
         type: "search",
-        label: formatAddress(result.raw), // ← fixed: was formatAddress(raw)
+        label: formatAddress(result.raw),
         lat: result.y,
         lon: result.x,
         place_type: placeType,
@@ -95,10 +91,7 @@ function resetLocationSelection() {
 function formatAddress(raw) {
   const a = raw.address;
 
-  // Extract city and street from display_name parts
   const parts = raw.display_name ? raw.display_name.split(", ") : [];
-  // display_name: "ICA Folkes Livs, 8, Rackarbergsgatan, ..., Uppsala, ..."
-  // Street is usually at index 2, city near the end before country
   const street = parts[2] || null;
   const houseNumber = parts[1] || null;
   const city =
@@ -128,14 +121,12 @@ function formatAddress(raw) {
   return [streetWithNumber, aCity, aCountry].filter(Boolean).join(", ");
 }
 
-// 3. Form Submission Handling
 if (form) {
   form.addEventListener("submit", async function (e) {
     e.preventDefault();
 
     const query = searchInput.value.trim();
 
-    // Case A: User typed a location
     if (query !== "") {
       if (locationDataInput.value !== "") {
         form.submit();
@@ -165,7 +156,6 @@ if (form) {
       return;
     }
 
-    // Case B: User left it blank. Fetch browser GPS location.
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
