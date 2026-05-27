@@ -117,8 +117,8 @@ weatherIncludes();
         <option value="">Any</option>
         <?php
         $typeOptions = [
-            "outfit", "school", "restaurant", "bar",
-            "culture", "gym", "outdoor", "other"
+            "school", "restaurant", "bar", "beach",
+            "culture", "gym", "other"
         ];
         foreach ($typeOptions as $opt): ?>
           <option value="<?= htmlspecialchars($opt) ?>"

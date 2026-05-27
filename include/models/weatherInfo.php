@@ -70,3 +70,61 @@ function wmoToLabel(int $code): string {
         default                                 => "Overcast",
     };
 }
+
+function placeTypeToCategory(string $placeType): string {
+    $normalized = strtolower(trim($placeType));
+
+    return match (true) {
+        str_contains($normalized, 'school'),
+        str_contains($normalized, 'university'),
+        str_contains($normalized, 'college'),
+        str_contains($normalized, 'kindergarten'),
+        str_contains($normalized, 'academy'),
+        str_contains($normalized, 'library') => 'School',
+
+        str_contains($normalized, 'restaurant'),
+        str_contains($normalized, 'cafe'),
+        str_contains($normalized, 'coffee'),
+        str_contains($normalized, 'fast_food'),
+        str_contains($normalized, 'food'),
+        str_contains($normalized, 'bistro') => 'Restaurant',
+
+        str_contains($normalized, 'bar'),
+        str_contains($normalized, 'pub'),
+        str_contains($normalized, 'nightclub'),
+        str_contains($normalized, 'brewery') => 'Bar',
+
+        str_contains($normalized, 'beach'),
+        str_contains($normalized, 'seaside'),
+        str_contains($normalized, 'shore'),
+        str_contains($normalized, 'coast') => 'Beach',
+
+        str_contains($normalized, 'gym'),
+        str_contains($normalized, 'fitness'),
+        str_contains($normalized, 'sports'),
+        str_contains($normalized, 'health'),
+        str_contains($normalized, 'studio') => 'Gym',
+
+        str_contains($normalized, 'museum'),
+        str_contains($normalized, 'theatre'),
+        str_contains($normalized, 'cinema'),
+        str_contains($normalized, 'gallery'),
+        str_contains($normalized, 'monument'),
+        str_contains($normalized, 'park'),
+        str_contains($normalized, 'garden'),
+        str_contains($normalized, 'zoo'),
+        str_contains($normalized, 'tourism'),
+        str_contains($normalized, 'leisure') => 'Culture',
+
+        str_contains($normalized, 'hotel'),
+        str_contains($normalized, 'hostel'),
+        str_contains($normalized, 'motel'),
+        str_contains($normalized, 'lodging') => 'Other',
+
+        $normalized === 'gps',
+        $normalized === 'search',
+        $normalized === 'unknown' => 'Other',
+
+        default => 'other',
+    };
+}

@@ -25,7 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['location_data'])) {
         $label     = $locationData['label']      ?? 'Unknown Location';
         $lat       = $locationData['lat'];
         $lon       = $locationData['lon'];
-        $placeType = $locationData['place_type'] ?? 'unknown';
+        $rawType   = $locationData['place_type'] ?? 'unknown';
+        $placeType = placeTypeToCategory($rawType);
 
         $isPrivate   = isset($_POST['private']) ? 1 : 0;
         $description = $_POST['description'] ?? '';
@@ -42,6 +43,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['location_data'])) {
         }
 
         try {
+            $hasImageUpload = false;
+            foreach ($_FILES['images']['name'] as $name) {
+                if (!empty($name)) {
+                    $hasImageUpload = true;
+                    break;
+                }
+            }
+
+            if (!$hasImageUpload) {
+                throw new Exception("You must upload at least one image.");
+            }
+
+            $pdo->beginTransaction();
+
             $stmt = $pdo->prepare("
                 INSERT INTO Post (UserID, Private, Description, Weather, Temperature, Adress, Type)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -59,43 +74,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['location_data'])) {
 
             $postId = $pdo->lastInsertId();
 
-            if (!empty($_FILES['images']['name'][0])) {
-
-                $uploadDir = "uploads/";
+            $uploadDir = "uploads/";
 
                 if (!is_dir($uploadDir)) {
                     mkdir($uploadDir, 0777, true);
                 }
 
+                $savedImages = 0;
                 foreach ($_FILES['images']['tmp_name'] as $index => $tmpName) {
 
                     if ($_FILES['images']['error'][$index] === 0) {
-
                         $originalName = basename($_FILES['images']['name'][$index]);
                         $ext          = pathinfo($originalName, PATHINFO_EXTENSION);
                         $newName      = uniqid("img_", true) . "." . $ext;
                         $destination  = $uploadDir . $newName;
 
-                        move_uploaded_file($tmpName, $destination);
+                        if (move_uploaded_file($tmpName, $destination)) {
+                            $stmtImg = $pdo->prepare("
+                                INSERT INTO Image (PostID, FilePath)
+                                VALUES (?, ?)
+                            ");
 
-                        $stmtImg = $pdo->prepare("
-                            INSERT INTO Image (UserID, PostID, FilePath)
-                            VALUES (?, ?, ?)
-                        ");
+                            $stmtImg->execute([
+                                $postId,
+                                $destination
+                            ]);
 
-                        $stmtImg->execute([
-                            $currentUserId,
-                            $postId,
-                            $destination
-                        ]);
+                            $savedImages++;
+                        }
                     }
                 }
-            }
+
+                if ($savedImages === 0) {
+                    throw new Exception("You must upload at least one valid image.");
+                }
+
+            $pdo->commit();
 
             echo "<div class='message-success'>Post successfully created!</div>";
 
-        } catch (PDOException $e) {
-            echo "<div class='message-error'>Database Error: " . htmlspecialchars($e->getMessage()) . "</div>";
+        } catch (Exception $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            if ($e instanceof PDOException) {
+                echo "<div class='message-error'>Database Error: " . htmlspecialchars($e->getMessage()) . "</div>";
+            } else {
+                echo "<div class='message-error'>" . htmlspecialchars($e->getMessage()) . "</div>";
+            }
         }
     }
 }
@@ -112,8 +138,8 @@ weatherIncludes(); // Loads Leaflet + GeoSearch JS required by autocomplete.js
         <form id="postForm" action="post.php" method="POST" enctype="multipart/form-data">
 
             <div>
-                <label for="image">Images:</label><br>
-                <input type="file" name="images[]" id="images" multiple accept="image/*">
+                <label for="image">Images (required):</label><br>
+                <input type="file" name="images[]" id="images" multiple accept="image/*" required>
             </div>
 
             <input type="hidden" name="location_data" id="locationData">

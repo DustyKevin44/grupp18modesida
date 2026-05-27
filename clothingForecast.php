@@ -107,13 +107,12 @@ weatherIncludes();
     <label for="category-select">Category (optional):</label>
     <select id="category-select">
       <option value="">Any</option>
-      <option value="outfit">Outfit</option>
       <option value="school">School</option>
       <option value="restaurant">Restaurant</option>
       <option value="bar">Bar</option>
+      <option value="beach">Beach</option>
       <option value="culture">Culture</option>
       <option value="gym">Gym</option>
-      <option value="outdoor">Outdoor</option>
       <option value="other">Other</option>
     </select>
 
