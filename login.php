@@ -1,7 +1,6 @@
 <?php 
 session_start();
 
-// 1. Process the login form only if it's a POST request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     require_once("include/models/db.php");
@@ -39,13 +38,11 @@ $stmt = $pdo->prepare("SELECT ID, Username, Password, Locked, Permission FROM Us
                 $_SESSION['username'] = $user['Username'];
                 $_SESSION['user_permission'] = $user['Permission'];
 
-                // Redirect to a secure dashboard area
                 header("Location: dashboard.php");
                 exit();
             }
         }
 
-        // Generic error message for security
         $_SESSION['login_error'] = "Invalid email or password.";
         header("Location: login.php");
         exit();
@@ -57,7 +54,6 @@ $stmt = $pdo->prepare("SELECT ID, Username, Password, Locked, Permission FROM Us
     }
 }
 
-// 2. If it's a GET request, skip processing and render the view below
 require_once "include/views/_header.php"; 
 ?>
 
@@ -65,7 +61,6 @@ require_once "include/views/_header.php";
     <div class="post-container">
         <h2>Login</h2>
         
-        <!-- Display error messages if they exist in the session -->
         <?php if (isset($_SESSION['login_error'])): ?>
             <div class="message-error">
                 <?= htmlspecialchars($_SESSION['login_error']); ?>
@@ -73,7 +68,6 @@ require_once "include/views/_header.php";
             </div>
         <?php endif; ?>
 
-        <!-- Note: action points back to this same file (login.php) -->
         <form action="login.php" method="POST">
             <div>
                 <label for="email">Email Address:</label>

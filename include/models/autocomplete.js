@@ -58,13 +58,14 @@ function renderResults(results) {
       searchInput.value = formatAddress(result.raw);
 
       const placeType = result.raw.type || result.raw.addresstype || "unknown";
+      const category = placeTypeToCategory(placeType);
 
       const structuredData = {
         type: "search",
         label: formatAddress(result.raw),
         lat: result.y,
         lon: result.x,
-        place_type: placeType,
+        place_type: category,
       };
 
       locationDataInput.value = JSON.stringify(structuredData);
@@ -87,6 +88,90 @@ function resetLocationSelection() {
   locationDataInput.value = "";
   resultsBox.innerHTML = "";
   resultsBox.style.display = "none";
+}
+
+function placeTypeToCategory(rawType) {
+  const type = String(rawType).toLowerCase();
+
+  if (
+    type.includes("school") ||
+    type.includes("university") ||
+    type.includes("college") ||
+    type.includes("kindergarten") ||
+    type.includes("academy") ||
+    type.includes("library")
+  ) {
+    return "school";
+  }
+
+  if (
+    type.includes("restaurant") ||
+    type.includes("cafe") ||
+    type.includes("coffee") ||
+    type.includes("fast_food") ||
+    type.includes("food") ||
+    type.includes("bistro")
+  ) {
+    return "restaurant";
+  }
+
+  if (
+    type.includes("bar") ||
+    type.includes("pub") ||
+    type.includes("nightclub") ||
+    type.includes("brewery")
+  ) {
+    return "bar";
+  }
+
+  if (
+    type.includes("beach") ||
+    type.includes("seaside") ||
+    type.includes("shore") ||
+    type.includes("coast")
+  ) {
+    return "beach";
+  }
+
+  if (
+    type.includes("gym") ||
+    type.includes("fitness") ||
+    type.includes("sports") ||
+    type.includes("health") ||
+    type.includes("studio")
+  ) {
+    return "gym";
+  }
+
+  if (
+    type.includes("museum") ||
+    type.includes("theatre") ||
+    type.includes("cinema") ||
+    type.includes("gallery") ||
+    type.includes("monument") ||
+    type.includes("park") ||
+    type.includes("garden") ||
+    type.includes("zoo") ||
+    type.includes("tourism") ||
+    type.includes("leisure")
+  ) {
+    return "culture";
+  }
+
+  if (
+    type.includes("hotel") ||
+    type.includes("hostel") ||
+    type.includes("motel") ||
+    type.includes("lodging")
+  ) {
+    return "other";
+  }
+
+  if (type === "gps" || type === "search" || type === "unknown") {
+    return "other";
+  }
+
+  return "other";
 }
 function formatAddress(raw) {
   const a = raw.address;
@@ -138,13 +223,14 @@ if (form) {
         const topResult = results[0];
         const placeType =
           topResult.raw?.type || topResult.raw?.addresstype || "unknown";
+        const category = placeTypeToCategory(placeType);
 
         const structuredData = {
           type: "search",
           label: formatAddress(topResult.raw),
           lat: topResult.y,
           lon: topResult.x,
-          place_type: placeType,
+          place_type: category,
         };
 
         locationDataInput.value = JSON.stringify(structuredData);
@@ -164,7 +250,7 @@ if (form) {
             label: "Current Location",
             lat: position.coords.latitude,
             lon: position.coords.longitude,
-            place_type: "gps",
+            place_type: placeTypeToCategory("gps"),
           };
           locationDataInput.value = JSON.stringify(structuredData);
           form.submit();

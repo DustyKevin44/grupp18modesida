@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once("include/models/db.php");
-// If the session variable isn't set, kick them back to the login page
+
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
